@@ -18,14 +18,13 @@ public class Intermain {
 		JLabel imgMain = new JLabel(icon);
 		
 		//add controls to listener
-		//MainEventListener mblistener = new MainEventListener();
 		btnSin.addActionListener(new MainEventListener());
 		btnMul.addActionListener(new MainEventListener());
 		
 		//init frame
 		frame.setSize(805,600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLocationRelativeTo(null);
+		frame.setLocationRelativeTo(null); //set window form to center screen
 		frame.setResizable(false);
 		
 		//init button (single player)		
