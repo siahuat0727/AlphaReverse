@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Test {
 
-	public static void main(String[] args) {
+	public static void mmain(String[] args) {
 
 		// 初始化棋盘
 		Board.initialize(8);
@@ -17,7 +17,6 @@ public class Test {
 
 		int noMove = 0; // 连续两次 noMove 是游戏结束的唯一依据
 		
-
 		boolean AI_VS_AI = true;
 
 		while (AI_VS_AI) {
