@@ -21,8 +21,6 @@ public class Board {
 	// 目前下棋方可以下的点， 用来作画面暗示，可透过.size 取得 总数
 	public static ArrayList<Position> possiblePos;
 	
-	public static int nTurn;
-	
 	public static ArrayList<Position> history;
 
 	public static void initialize() {
@@ -36,12 +34,7 @@ public class Board {
 		else
 			SIZE = size + (size & 1); // 偶数为佳
 		
-		board = new int[SIZE][SIZE];
-		board[SIZE / 2 - 1][SIZE / 2 - 1] = board[SIZE / 2][SIZE / 2] = WHITE; // |白|黑|
-		board[SIZE / 2 - 1][SIZE / 2] = board[SIZE / 2][SIZE / 2 - 1] = BLACK; // |黑|白|
-		nTurn = 0;
-		blackCount = 2;
-		whiteCount = 2;
+		startAgain();
 		possiblePos = new ArrayList<Position>();
 		history = new ArrayList<Position>();
 		ReversiRule.updateWeight();
@@ -49,14 +42,14 @@ public class Board {
 	}
 	
 	public static void startAgain(){
+		board = new int[SIZE][SIZE];
+		board[SIZE / 2 - 1][SIZE / 2 - 1] = board[SIZE / 2][SIZE / 2] = WHITE; // |white|black|
+		board[SIZE / 2 - 1][SIZE / 2] = board[SIZE / 2][SIZE / 2 - 1] = BLACK; // |black|white|
 		blackCount = 2;
 		whiteCount = 2;
-		board = new int[SIZE][SIZE];
-		board[SIZE / 2 - 1][SIZE / 2 - 1] = board[SIZE / 2][SIZE / 2] = WHITE; // |白|黑|
-		board[SIZE / 2 - 1][SIZE / 2] = board[SIZE / 2][SIZE / 2 - 1] = BLACK; // |黑|白|
 	}
 
-	// debug 用
+	// for debug 
 	public static void printBoard() {
 		for (int i = -2; i < SIZE; ++i) {
 			if (i == -2) {
@@ -72,9 +65,9 @@ public class Board {
 				for (int j = 0; j < SIZE; ++j) {
 					System.out.print("  ");
 					if (board[i][j] == WHITE)
-						System.out.print("○");
+						System.out.print("o");
 					else if (board[i][j] == BLACK)
-						System.out.print("●");
+						System.out.print("x");
 					else
 						System.out.print(" ");
 				}

@@ -16,12 +16,16 @@ public class ReversiRule {
 	public static boolean go(int xPos, int yPos, int color) {
 		return go(xPos, yPos, color, false);
 	}
+	
+	protected static boolean go(int xPos, int yPos, int color, boolean checkOnly){
+		return go(xPos, yPos, color, checkOnly, Board.history);
+	}
 
-	private static boolean go(int xPos, int yPos, int color, boolean checkOnly) {
+	protected static boolean go(int xPos, int yPos, int color, boolean checkOnly, ArrayList<Position> history) {
 		if(xPos < 0)
 			return false;
 		if (!checkOnly)
-			Board.history.set(Board.nTurn - 1, new Position(xPos, yPos));
+			history.set(history.size() - 1, new Position(xPos, yPos));
 
 		int[][] posToReverse = new int[Board.SIZE][2];
 		
@@ -80,16 +84,20 @@ public class ReversiRule {
 	}
 
 	// 判断color方可不可以走下一步，每次走前 一定一定 要呼叫这method
-	public static boolean canIgo(int color) {
-		Board.nTurn++;
-		Board.history.add(new Position(-1, -1));
+	public static boolean canIgo(int color){
+		return canIgo(color, Board.history);
+	}
+	
+	protected static boolean canIgo(int color, ArrayList<Position> history){
+		
+		history.add(new Position(-1, -1));
 
 		checkWhereCanMove(color);
 		return !Board.possiblePos.isEmpty();
 	}
 
 	// save the results in Board.possiblePos
-	private static boolean checkWhereCanMove(int color) {
+	protected static ArrayList<Position> checkWhereCanMove(int color) {
 
 		if (Board.possiblePos.isEmpty() == false)
 			Board.possiblePos.clear();
@@ -99,54 +107,68 @@ public class ReversiRule {
 				if (go(x, y, color, true))
 					Board.possiblePos.add(new Position(x, y));
 
-		return !Board.possiblePos.isEmpty();
+		return Board.possiblePos;
 	}
 
-	// debug 用
+	// for debug 
 	public static void printWhereCanMove() {
-		for (int i = 0; i < Board.possiblePos.size(); ++i)
-			System.out.print("( " + Board.possiblePos.get(i).getX() + "," + Board.possiblePos.get(i).getY() + " ) ");
+		for (Position pos : Board.possiblePos)
+			pos.print();
 		System.out.println("");
 	}
 
+	private static final int [][] DIRECTION = new int[][]{{1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}, {1, 0}};
+	
 	private static boolean move(int dir) {
-		if (dir == 0 || dir == 6 || dir == 7)
-			x++;
-		if (dir == 0 || dir == 1 || dir == 2)
-			y++;
-		if (dir == 2 || dir == 3 || dir == 4)
-			x--;
-		if (dir == 4 || dir == 5 || dir == 6)
-			y--;
+//		if (dir == 0 || dir == 6 || dir == 7)
+//			x++;
+//		if (dir == 0 || dir == 1 || dir == 2)
+//			y++;
+//		if (dir == 2 || dir == 3 || dir == 4)
+//			x--;
+//		if (dir == 4 || dir == 5 || dir == 6)
+//			y--;
+		
+		x += DIRECTION[dir][0];
+		y += DIRECTION[dir][1];
+		
 		if (x < 0 || x >= Board.SIZE || y < 0 || y >= Board.SIZE)
 			return false;
 		return true;
 	}
 	
-	public static void goToNow(){
+	protected static void goToThis(){
+		goToThis(Board.history);
+	}
+	
+	protected static void goToThis(ArrayList<Position> history){
 		Board.startAgain();
 		int historyColor = Board.WHITE;
-		for (int j = 0; j < Board.nTurn-1; ++j) {
-//			System.out.println("for "+j);
-			Position pos = Board.history.get(j);
-			go(pos.getX(), pos.getY(), historyColor);
+		
+//		String str = "history: ";
+		
+		for (Position move : history) {
+//			str += move;
+			go(move.getX(), move.getY(), historyColor);
 			historyColor *= -1;
 		}
+//		System.out.println(str);
+//		Board.printBoard();
 	}
 
-	public static void updateWeight() {
-		weight = new int[][] { { 50, -50, 5, 5, 5, 5, -50, 50 }, { -50, -50, 1, 1, 1, 1, -50, -50 },
+	protected static void updateWeight() {
+		weight = new int[][] { { 500, -10, 5, 5, 5, 5, -10, 500 }, { -10, -50, 1, 1, 1, 1, -50, -10 },
 				{ 5, 1, 1, 1, 1, 1, 1, 5 }, { 5, 1, 1, 1, 1, 1, 1, 5 }, { 5, 1, 1, 1, 1, 1, 1, 5 },
-				{ 5, 1, 1, 1, 1, 1, 1, 5 }, { -50, -50, 1, 1, 1, 1, -50, -50 }, { 50, -50, 5, 5, 5, 5, -50, 50 }, };
+				{ 5, 1, 1, 1, 1, 1, 1, 5 }, { -10, -50, 1, 1, 1, 1, -50, -10 }, { 500, -10, 5, 5, 5, 5, -10, 500 }, };
 	}
 
-	public static void setMobility() {
+	protected static void setMobility() {
 		mobility = new int[][] { { 5, 1, 3, 3, 3, 3, 1, 5 }, { 1, 1, 2, 2, 2, 2, 1, 1 }, { 3, 2, 2, 2, 2, 2, 2, 3 },
 				{ 3, 2, 2, 2, 2, 2, 2, 3 }, { 3, 2, 2, 2, 2, 2, 2, 3 }, { 3, 2, 2, 2, 2, 2, 2, 3 },
 				{ 1, 1, 2, 2, 2, 2, 1, 1 }, { 5, 1, 3, 3, 3, 3, 1, 5 }, };
 	}
 
-	public static int getWeight(int color) {
+	protected static int getWeight(int color) {
 		int ans = 0;
 		for (int i = 0; i < Board.SIZE; ++i) {
 			for (int j = 0; j < Board.SIZE; ++j) {
@@ -156,24 +178,43 @@ public class ReversiRule {
 					ans -= weight[i][j];
 			}
 		}
+//		System.out.print(" weight = "+ans);
 		return ans;
 	}
 
-	public static int getMobility(int color) {
+	protected static int getMobility(int color) {
 		int ans = 0;
 		checkWhereCanMove(color);
-		for (int i = 0; i < Board.possiblePos.size(); ++i) {
-			Position pos = Board.possiblePos.get(i);
+		for (Position pos : Board.possiblePos) {
 			ans += mobility[pos.getX()][pos.getY()];
 		}
-		return 5 * ans;
+
+//		System.out.print(" mobility = "+ans);
+		return 2 * ans;
 	}
 	
-	public static String getName(int color){
+	protected static int getEvaluateValue(int color){
+		int weightValue = getWeight(color);
+		
+		int mobilityEnemy = getMobility(color);
+		
+		return weightValue + mobilityEnemy;
+	}
+	
+	// for debug
+	protected static String getName(int color){
 		if(color == Board.WHITE)
 			return "white";
 		else
 			return "black";
+	}
+	
+	protected static int getStep(){
+		return Board.whiteCount + Board.blackCount + 1; 
+	}
+	
+	protected static int getTotalStep(){
+		return Board.SIZE * Board.SIZE;
 	}
 
 }

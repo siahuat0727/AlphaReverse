@@ -6,35 +6,31 @@ import java.util.Random;
 public class AI_easy extends ReversiRule {
 
 	public static void go(int color) {
-		// TODO Auto-generated method stub\
 
-		ArrayList<Position> curPossiblePos = new ArrayList<Position>();
-		for(int i = 0; i < Board.possiblePos.size(); ++i)
-			curPossiblePos.add(Board.possiblePos.get(i));
-		
+		ArrayList<Position> curPossiblePos = new ArrayList<Position>(Board.possiblePos);
+
 		int max = -1000000;
-		
+
 		ArrayList<Position> goodPos = new ArrayList<Position>();
-		
-		for(int i = 0; i < curPossiblePos.size(); ++i){
-			Position pos = curPossiblePos.get(i);
-			goToNow();
-			go(pos.getX(), pos.getY(), color);
-			
-			int weightValue = getWeight(color);
-			int mobilityEnemy = getMobility(-1*color);
-			int value =  weightValue - mobilityEnemy + 200;
-			System.out.println("for "+pos.getX()+","+pos.getY()+" weight = "+weightValue+" mobEne = "+mobilityEnemy+" value = "+value);			
-			if(value > max){
+
+		for (Position pos : curPossiblePos) {
+			goToThis();
+
+			go(pos.getX(), pos.getY(), color, false, new ArrayList<Position>(Board.history)); // pass a dummy arrayList =.=
+
+			int value = getEvaluateValue(color);
+
+//			System.out.println("for " + pos.getX() + "," + pos.getY() + " value = " + value);
+			if (value > max + 5) {
 				goodPos.clear();
 				goodPos.add(pos);
 				max = value;
-			}else if(value == max){
+			} else if (value > max - 5) {
 				goodPos.add(pos);
 			}
 		}
-		
-		goToNow();
+
+		goToThis();
 
 		Random rand = new Random();
 		int choice = rand.nextInt(goodPos.size());
@@ -43,18 +39,4 @@ public class AI_easy extends ReversiRule {
 		go(resultX, resultY, color);
 
 	}
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

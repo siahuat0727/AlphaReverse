@@ -31,17 +31,17 @@ public class Test {
 			} else {
 				noMove = 0;
 //				System.out.println("white turn :");
-//				System.out.print("white can move at ");
-//				ReversiRule.printWhereCanMove();
+				System.out.print("white can move at ");
+				ReversiRule.printWhereCanMove();
 //				System.out.println("press enter to continue......");
 //				scanner.nextLine();
 				
-				AI.go(Board.WHITE, AI_level);
+				AI.go(Board.WHITE, 2);
 				Board.printBoard();
 
 				System.out.println("white " + Board.whiteCount + " vs black " + Board.blackCount);
 				System.out.print("white move at ");
-				Board.history.get(Board.nTurn-1).print();
+				Board.history.get(Board.history.size()-1).print();
 				System.out.println("");
 				System.out.println("white finished, press enter to continue......");
 				scanner.nextLine();
@@ -57,19 +57,18 @@ public class Test {
 			} else {
 				noMove = 0;
 //				System.out.println("black turn :");
-//				System.out.print("black can move at ");
-//				ReversiRule.printWhereCanMove();
+				System.out.print("black can move at ");
+				ReversiRule.printWhereCanMove();
 //				System.out.println("press enter to continue......");
 //				scanner.nextLine();
 				
-				AI.go(Board.BLACK, AI_level);
-				
+				AI.go(Board.BLACK, 3);
 				
 				Board.printBoard();
 
 				System.out.println("white " + Board.whiteCount + " vs black " + Board.blackCount);
 				System.out.print("black move at ");
-				Board.history.get(Board.nTurn-1).print();
+				Board.history.get(Board.history.size()-1).print();
 				System.out.println("");
 				System.out.println("black finished, press enter to continue......");
 				scanner.nextLine();

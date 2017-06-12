@@ -7,6 +7,11 @@ public class Position {
 		this.x = x;
 		this.y = y;
 	}
+	
+	Position(Position pos) {
+		this.x = pos.getX();
+		this.y = pos.getY();
+	}
 
 	public void setX(int x) {
 		this.x = x;
@@ -23,7 +28,12 @@ public class Position {
 	public int getY() {
 		return y;
 	}
+	
 	public void print(){
 		System.out.print("( "+x+","+y+" ) ");
+	}
+	
+	public String toString(){
+		return "( "+x+","+y+" ) ";
 	}
 }
