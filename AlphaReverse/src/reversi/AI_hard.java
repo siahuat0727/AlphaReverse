@@ -5,8 +5,19 @@ import java.util.ArrayList;
 public class AI_hard extends AI_medium {
 	
 	public static void go(int color){
-		Position goodPos = minMax(5, color);
+
+		Position goodPos;
+		
+		if(getTotalStep() - getStep() <= 10){
+			updateWeight(1);
+			goodPos= minMax(10, color);
+		}else{
+			updateWeight(0);
+			goodPos= minMax(5, color);
+		}
+		
 		goToThis();
+		
 		go(goodPos.getX(), goodPos.getY(), color);
 	}
 

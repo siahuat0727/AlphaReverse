@@ -5,13 +5,22 @@ import java.util.ArrayList;
 public class AI_medium extends AI_easy{
 	
 	public static void go(int color){
-		Position goodPos = minMax(4, color);
+		Position goodPos;
+		
+		if(getTotalStep() - getStep() <= 8 ){
+			updateWeight(1);
+			goodPos= minMax(8, color);
+		}else{
+			updateWeight(0);
+			goodPos= minMax(4, color);
+		}
+		
 		goToThis();
+		
 		go(goodPos.getX(), goodPos.getY(), color);
 	}
 	
 	public static Position minMax(int depth, int color) {
-
 		int bestValue = -1000;
 		Position bestMove = new Position(0, 0);
 
