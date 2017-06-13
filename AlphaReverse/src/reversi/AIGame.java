@@ -1,5 +1,4 @@
-package reversi;
-
+package testsingleplayer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,10 +10,13 @@ public class AIGame extends JFrame implements ActionListener
 	private int AI_level;
 	private int color;
 	private int noMove = 0;
-	private volatile int pressed = 0 ;
+	static boolean pressed = false ;
 	private int turn;
+	private int count = 0;
 	private int x , y;
 	private String command;
+	
+	static Object lock = new Object();
 	
 	
 	JButton undo = new JButton("UNDO");
@@ -85,7 +87,6 @@ public class AIGame extends JFrame implements ActionListener
 	}
 	
 	
-	
 	public void startGame()
 	{
 		//board button 
@@ -116,19 +117,115 @@ public class AIGame extends JFrame implements ActionListener
 		}
 
 		System.out.println("asxdvgdfd");
-		
-		while(pressed == 0)
+
+	}
+	
+	public class Thr extends Thread
+	{
+		public void run()
 		{
-			try 
+			synchronized(lock)
 			{
-				Thread.sleep(300);
-			} 
-			catch (InterruptedException e) 
+				pressed = false;
+			}
+			
+			while(true)
 			{
-				// TODO: handle exception
+				if( pressed == false )
+				{
+					while(true) 
+					{
+						count ++;
+						synchronized( lock )
+						{
+							if( pressed == true )
+							{
+								break;
+							}
+						}
+					}
+				}
+				
+				x = Integer.parseInt(command.substring(1, 2));
+				y = Integer.parseInt(command.substring(2));
+				
+				System.out.println("hi " + x + " " + y);
+				
+				if( ReversiRule.canIgo( color ) == false)
+				{
+					noMove++;
+				}
+				else
+				{
+					ReversiRule.goToThis();
+					ReversiRule.go(x, y, color );
+				}
+				
+				for( int i = 0 ; i < bsize ; i++)
+				{
+					for( int j = 0 ; j < bsize ; j++ )
+					{
+						if( Board.board[i][j] == -1 )
+						{
+							boardc[i][j].setEnabled(false);
+							boardc[i][j].setBackground( Color.BLACK);
+						} 
+						else if(Board.board[i][j] == 1 )
+						{
+							boardc[i][j].setEnabled(false);
+							boardc[i][j].setBackground( Color.WHITE);
+						}
+					}
+				}
+				status.setText("white " + Board.whiteCount + " vs black " + Board.blackCount);
+				
+
+				try
+				{
+					Thread. sleep(1000);
+				}
+				catch(InterruptedException ex)
+				{
+					ex.printStackTrace();
+				}
+				
+				Board.printBoard();
+				
+				if( ReversiRule.canIgo(-color) == false)
+				{
+					noMove++;
+				}
+				else
+				{
+					noMove = 0;
+					AI.go(-color, AI_level);
+					Board.printBoard();
+				}
+					
+				for( int i = 0 ; i < bsize ; i++)
+				{
+					for( int j = 0 ; j < bsize ; j++ )
+					{
+						if( Board.board[i][j] == -1 )
+						{
+							boardc[i][j].setEnabled(false);
+							boardc[i][j].setBackground( Color.BLACK);
+						} 
+						else if(Board.board[i][j] == 1 )
+						{
+							boardc[i][j].setEnabled(false);
+							boardc[i][j].setBackground( Color.WHITE);
+						}
+					}
+				}
+				status.setText("white " + Board.whiteCount + " vs black " + Board.blackCount);
+				
+				synchronized(lock)
+				{
+					pressed = false;
+				}
 			}
 		}
-		
 	}
 	
 	public void actionPerformed( ActionEvent e )
@@ -138,80 +235,33 @@ public class AIGame extends JFrame implements ActionListener
 		
 		if( command.equals("UNDO") )
 		{
-			pressed = 1;
+			
 		}
 		else if( command.equals("Black") ) 
 		{
 			System.out.println(command);
 			color = -1;
 			startGame();
+			Thr walau = new Thr();
+			walau.start();
 		}
 		else if( command.equals("White") )
 		{
 			System.out.println(command);
 			color = 1;
 			startGame();
+			Thr walau = new Thr();
+			walau.start();
 		}
+		/////////////////////////////////////////////////// chess action
 		else
 		{
-			
-			x = Integer.parseInt(command.substring(1, 2));
-			y = Integer.parseInt(command.substring(2));
-			
-			System.out.println("hi " + x + " " + y);
-			
-			if( ReversiRule.canIgo( color ) == false)
-			{
-				noMove++;
-			}
-			else
-			{
-				ReversiRule.go(x, y, color );
-			}
-
-			
-			try
-			{
-				Thread. sleep(3000);
-			}
-			catch(InterruptedException ex)
-			{
-				ex.printStackTrace();
-			}
-			
-			Board.printBoard();
-			
-			if( ReversiRule.canIgo(-color) == false)
-			{
-				noMove++;
-			}
-			else
-			{
-				noMove = 0;
-				AI.go(-color, AI_level);
-				Board.printBoard();
-			}
-				
-			for( int i = 0 ; i < bsize ; i++)
-			{
-				for( int j = 0 ; j < bsize ; j++ )
-				{
-					if( Board.board[i][j] == -1 )
-					{
-						boardc[i][j].setEnabled(false);
-						boardc[i][j].setBackground( Color.BLACK);
-					} 
-					else if(Board.board[i][j] == 1 )
-					{
-						boardc[i][j].setEnabled(false);
-						boardc[i][j].setBackground( Color.WHITE);
-					}
-				}
-			}
-			status.setText("white " + Board.whiteCount + " vs black " + Board.blackCount);
-			
+			synchronized(lock)
+            {
+                pressed = true;
+            }
 		}
-		
+		////////////////////////////////////////// chess action
 	}
 	
 }
