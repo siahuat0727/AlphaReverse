@@ -5,7 +5,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-public class Intermain {
+public class WindowMain {
 
 	public static void main(String[] args) {
 		//variables

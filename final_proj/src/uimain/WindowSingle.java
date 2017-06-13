@@ -3,13 +3,13 @@ package uimain;
 import javax.swing.*;
 import java.awt.event.*;
 
-public class SingleWindow extends JFrame implements ActionListener
+public class WindowSingle extends JFrame implements ActionListener
 {
 	public String bsize;
 	
 	private JTextField size;
 	
-	public SingleWindow()
+	public WindowSingle()
 	{
 		setVisible(true);
 		setSize(450,600);

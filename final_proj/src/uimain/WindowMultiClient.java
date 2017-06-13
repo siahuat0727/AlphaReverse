@@ -7,7 +7,7 @@ import java.awt.event.*;
 import java.net.*;
 import java.io.*;
 
-public class ClientSide extends JFrame implements ActionListener
+public class WindowMultiClient extends JFrame implements ActionListener
 {
 	private int bsize;
 	
@@ -20,7 +20,7 @@ public class ClientSide extends JFrame implements ActionListener
 	//JButton black = new JButton("Choose Black");
 	//JButton white = new JButton("Choose White");
 	
-	public ClientSide()
+	public WindowMultiClient()
 	{
 		//System.out.println("size is " + size + " diff is " + difficulty );
 		bsize = 8;
