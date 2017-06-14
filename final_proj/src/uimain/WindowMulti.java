@@ -47,7 +47,6 @@ public class WindowMulti extends JFrame implements ActionListener {
 		}
 		else if( command.equals("CLIENT")) {
 			WindowMultiClient game = new WindowMultiClient();
-			game.startClient();
 			game.setLocationRelativeTo(null);
 		}	
 	}
