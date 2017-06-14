@@ -1,9 +1,9 @@
 package uimain;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -12,14 +12,12 @@ public class LAN {
 		try {
 			ServerSocket serverSock = new ServerSocket(8000);
 			Socket connectionSock = serverSock.accept();
-			BufferedReader clientInput = new BufferedReader(new InputStreamReader(connectionSock.getInputStream()));
-			DataOutputStream clientOutput = new DataOutputStream(connectionSock.getOutputStream());
-			String clientText = clientInput.readLine();
-			System.out.println("READ DATA(" + clientText + ")");
-			clientOutput.close();
-			clientInput.close();
+			DataInputStream in = new DataInputStream(connectionSock.getInputStream());
+			String clientText = in.readUTF();
+			System.out.println("READ  DATA :" + clientText);
 			connectionSock.close();
 			serverSock.close();
+			in.close();
 			return clientText;
 		} catch (IOException e) {
 			System.out.println("READ  ERROR: " + e.getMessage());
@@ -28,27 +26,16 @@ public class LAN {
 	}
 
 	public static void Write(String inp) {
-		System.out.println("WRITE DATA(" + inp + ")");
+		System.out.println("WRITE DATA :" + inp);
 		try {
 			Socket cSock = new Socket("localhost", 8000);
-			DataOutputStream serverOutput = new DataOutputStream(cSock.getOutputStream());
-			serverOutput.writeBytes(inp);
-			Sleep(1000);
-			serverOutput.close();
-			Sleep(150);
+			OutputStream outToServer = cSock.getOutputStream();
+			DataOutputStream out = new DataOutputStream(outToServer);
+			out.writeUTF(inp);
+			outToServer.close();
 			cSock.close();
-			Sleep(150);
 		} catch (IOException e) {
 			System.out.println("WRITE ERROR:" + e.getMessage());
-		}
-	}
-	
-	public static void Sleep(int inp) {
-		try {
-			Thread.sleep(inp);
-		}
-		catch (Exception e) {
-			System.out.println(e);
 		}
 	}
 }

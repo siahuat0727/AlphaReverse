@@ -106,7 +106,6 @@ public class WindowMultiServer extends JFrame implements ActionListener {
 		if (col == 0) {
 			System.out.println("Host - Black");
 			LAN.Read();
-			LAN.Sleep(1000);
 			LAN.Write("WHITE");
 			SetBoardEnable(true);
 		} else if (col == 1) {
@@ -126,10 +125,8 @@ public class WindowMultiServer extends JFrame implements ActionListener {
 			startGame(1);
 		} else if (command.substring(0, 5).equals("BOARD")) {
 			((JButton) e.getSource()).setBackground(Color.white);
-			System.out.println(((JButton) e.getSource()).getActionCommand().substring(5));
 			LAN.Write(((JButton) e.getSource()).getActionCommand().substring(5));
 			SetBoardEnable(false);
-			LAN.Sleep(2000);
 			String temp = LAN.Read();
 			UpdateGameBoard(temp);
 			SetBoardEnable(true);
