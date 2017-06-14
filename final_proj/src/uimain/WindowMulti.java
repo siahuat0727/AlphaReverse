@@ -15,6 +15,7 @@ public class WindowMulti extends JFrame implements ActionListener {
 		btnClient.addActionListener(this);
 		
 		//init window form
+		setTitle("Multi Player");
 		setVisible(true);
 		setSize(450,450);
 		setLayout(null);

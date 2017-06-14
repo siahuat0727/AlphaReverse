@@ -25,10 +25,10 @@ public class LAN {
 		}
 	}
 
-	public static void Write(String inp) {
+	public static void Write(String inp, String ServerIP) {
 		System.out.println("WRITE DATA :" + inp);
 		try {
-			Socket cSock = new Socket("localhost", 8000);
+			Socket cSock = new Socket(ServerIP, 8000);
 			OutputStream outToServer = cSock.getOutputStream();
 			DataOutputStream out = new DataOutputStream(outToServer);
 			out.writeUTF(inp);

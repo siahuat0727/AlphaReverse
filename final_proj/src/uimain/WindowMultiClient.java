@@ -89,7 +89,7 @@ public class WindowMultiClient extends JFrame implements ActionListener {
 	}
 
 	public void startGame() {
-		LAN.Write("CONNECTED");
+		LAN.Write("CONNECTED", "localhost");
 		String temp = LAN.Read();
 		if (temp.equals("WHITE")) {
 			temp = LAN.Read();
@@ -118,7 +118,7 @@ public class WindowMultiClient extends JFrame implements ActionListener {
 		String command = e.getActionCommand();
 		if (command.substring(0, 5).equals("BOARD")) {
 			((JButton) e.getSource()).setBackground(Color.white);
-			LAN.Write(((JButton) e.getSource()).getActionCommand().substring(5));
+			LAN.Write(((JButton) e.getSource()).getActionCommand().substring(5), "localhost");
 			SetBoardEnable(false);
 			String temp = LAN.Read();
 			UpdateGameBoard(temp);
