@@ -117,10 +117,16 @@ public class WindowMultiServer extends JFrame implements ActionListener {
 		} else if (command.substring(0, 5).equals("BOARD")) {
 			((JButton) e.getSource()).setBackground(myColor);
 			LAN.Write(((JButton) e.getSource()).getActionCommand().substring(5), IpAddress);
-			SetBoardEnable(false);
-			temp = LAN.Read();
-			UpdateGameBoard(temp);
-			SetBoardEnable(true);
+			//Read Set************************
+			Thread ReadData = new Thread() {
+				@Override
+				public void run() {
+					temp = LAN.Read();
+					UpdateGameBoard(temp);
+				}
+			};
+			ReadData.start();
+			//**********************************
 		} else if (command.equals("SURRENDER")) {
 
 		}
