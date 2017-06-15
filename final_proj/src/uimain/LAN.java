@@ -14,7 +14,7 @@ public class LAN {
 			Socket connectionSock = serverSock.accept();
 			DataInputStream in = new DataInputStream(connectionSock.getInputStream());
 			String clientText = in.readUTF();
-			System.out.println("READ  DATA :" + clientText);
+			//System.out.println("READ  DATA :" + clientText);
 			connectionSock.close();
 			serverSock.close();
 			in.close();
@@ -25,8 +25,8 @@ public class LAN {
 		}
 	}
 
-	public static void Write(String inp, String ServerIP) {
-		System.out.println("WRITE DATA :" + inp);
+	public static void Write(String inp , String ServerIP) {
+		//System.out.println("WRITE DATA :" + inp);
 		try {
 			Socket cSock = new Socket(ServerIP, 8000);
 			OutputStream outToServer = cSock.getOutputStream();

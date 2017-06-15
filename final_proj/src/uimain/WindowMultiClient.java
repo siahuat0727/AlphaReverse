@@ -7,7 +7,9 @@ import java.awt.event.*;
 public class WindowMultiClient extends JFrame implements ActionListener {
 
 	private int bsize;
-
+	private int color;
+	private String IpAddress;
+	
 	JButton btnUndo;
 	JButton btnRestart;
 	JButton btnSurrender;
@@ -15,10 +17,11 @@ public class WindowMultiClient extends JFrame implements ActionListener {
 	JButton board[][];
 	JPanel gameboard;
 
-	public WindowMultiClient() {
+	public WindowMultiClient( String inpIp) {
 		// init data
 		bsize = 8;
-
+		IpAddress = inpIp;
+		
 		// variables
 		btnUndo = new JButton("Undo");
 		btnRestart = new JButton("Restart");
@@ -89,21 +92,29 @@ public class WindowMultiClient extends JFrame implements ActionListener {
 	}
 
 	public void startGame() {
-		LAN.Write("CONNECTED", "localhost");
+		LAN.Write("CONNECTED" , IpAddress);
 		String temp = LAN.Read();
 		if (temp.equals("WHITE")) {
 			temp = LAN.Read();
 			SetBoardEnable(true);
 			UpdateGameBoard(temp);
+			color = -1;
 		}
 		if (temp.equals("BLACK")) {
 			SetBoardEnable(true);
 			UpdateGameBoard(temp);
+			color = 1 ;
 		}
 	}
 
 	private void UpdateGameBoard(String inp) {
-		System.out.println("UPDATE: " + inp);
+		System.out.println("CLIENT UPDATE: " + inp);
+		int x = Integer.parseInt(inp.substring(1, 2)) ;
+		int y = Integer.parseInt(inp.substring(2)) ;		
+		if( color == 1 )
+			board[x][y].setBackground(Color.white);
+		else
+			board[x][y].setBackground(Color.black);
 	}
 
 	private void SetBoardEnable(Boolean inp) {
@@ -115,17 +126,21 @@ public class WindowMultiClient extends JFrame implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		String command = e.getActionCommand();
-		if (command.substring(0, 5).equals("BOARD")) {
-			((JButton) e.getSource()).setBackground(Color.white);
-			LAN.Write(((JButton) e.getSource()).getActionCommand().substring(5), "localhost");
+		String command = e.getActionCommand();		
+		if (command.equals("START")) {
+			startGame();
+		}
+		else if (command.substring(0, 5).equals("BOARD")) {
+			if( color == -1 )
+				((JButton) e.getSource()).setBackground(Color.white);
+			else if( color == 1)
+				((JButton) e.getSource()).setBackground(Color.black);
+
+			LAN.Write(((JButton) e.getSource()).getActionCommand().substring(5), IpAddress);
 			SetBoardEnable(false);
 			String temp = LAN.Read();
 			UpdateGameBoard(temp);
 			SetBoardEnable(true);
-		}
-		else if (command.equals("START")) {
-			startGame();
 		}
 	}
 }

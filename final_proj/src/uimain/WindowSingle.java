@@ -6,8 +6,8 @@ import java.awt.event.*;
 public class WindowSingle extends JFrame implements ActionListener
 {
 	public String bsize;
-	
 	private JTextField size;
+	public static int lol ;
 	
 	public WindowSingle()
 	{
@@ -51,7 +51,7 @@ public class WindowSingle extends JFrame implements ActionListener
 	public void actionPerformed( ActionEvent e )
 	{
 		bsize = size.getText();
-		int lol = Integer.parseInt(bsize.substring(42));
+		lol = Integer.parseInt(bsize.substring(42));
 		System.out.println(lol);
 		
 		
@@ -60,17 +60,15 @@ public class WindowSingle extends JFrame implements ActionListener
 		if(command.equals("EASY"))
 		{
 			AIGame game = new AIGame( lol , 1 );
-			game.startGame();
 		}
 		else if(command.equals("MEDIUM"))
 		{
 			AIGame game = new AIGame( lol , 2 );
-			game.startGame();
+
 		}
 		else if(command.equals("HARD"))
 		{
 			AIGame game = new AIGame( lol , 3 );
-			game.startGame();
 		}
 
 	}

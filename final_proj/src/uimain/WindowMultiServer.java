@@ -11,7 +11,8 @@ import java.io.*;
 public class WindowMultiServer extends JFrame implements ActionListener {
 
 	private int bsize;
-
+	private int color;
+	private String IpAddress;
 	JButton btnUndo;
 	JButton btnRestart;
 	JButton btnSurrender;
@@ -20,10 +21,11 @@ public class WindowMultiServer extends JFrame implements ActionListener {
 	JButton board[][];
 	JPanel gameboard;
 
-	public WindowMultiServer() {
+	public WindowMultiServer( String inpIP ) {
 		// init data
 		bsize = 8;
-
+		IpAddress = inpIP;
+		
 		// variables
 		btnUndo = new JButton("Undo");
 		btnRestart = new JButton("Restart");
@@ -103,15 +105,16 @@ public class WindowMultiServer extends JFrame implements ActionListener {
 
 	public void startGame(int col) {
 		System.out.println("Starting Game...");
-		if (col == 0) {
+		if (col == -1) {
 			System.out.println("Host - Black");
 			LAN.Read();
-			LAN.Write("WHITE", "localhost");
+			LAN.Write("WHITE" , IpAddress);
 			SetBoardEnable(true);
-		} else if (col == 1) {
+		}		
+		else if (col == 1) {
 			System.out.println("Host = White");
 			LAN.Read();
-			LAN.Write("BLACK", "localhost");
+			LAN.Write("BLACK" , IpAddress);
 			LAN.Read();
 			SetBoardEnable(true);
 		}
@@ -120,12 +123,19 @@ public class WindowMultiServer extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		if (command.equals("BLACK")) {
-			startGame(0);
-		} else if (command.equals("WHITE")) {
-			startGame(1);
-		} else if (command.substring(0, 5).equals("BOARD")) {
-			((JButton) e.getSource()).setBackground(Color.white);
-			LAN.Write(((JButton) e.getSource()).getActionCommand().substring(5), "localhost");
+			color = -1;
+			startGame(color);
+		} 
+		else if (command.equals("WHITE")) {
+			color = 1;
+			startGame(color);
+		}
+		else if (command.substring(0, 5).equals("BOARD")) {
+			if( color == -1 )
+				((JButton) e.getSource()).setBackground(Color.black);
+			else if( color == 1)
+				((JButton) e.getSource()).setBackground(Color.white);
+			LAN.Write(((JButton) e.getSource()).getActionCommand().substring(5), IpAddress);
 			SetBoardEnable(false);
 			String temp = LAN.Read();
 			UpdateGameBoard(temp);
@@ -134,7 +144,14 @@ public class WindowMultiServer extends JFrame implements ActionListener {
 	}
 	
 	private void UpdateGameBoard(String inp) {
-		System.out.println("UPDATE: " + inp);
+		System.out.println("SERVER UPDATE: " + inp);
+		int x = Integer.parseInt(inp.substring(1, 2)) ;
+		int y = Integer.parseInt(inp.substring(2)) ;
+		
+		if( color == 1 )
+			board[x][y].setBackground(Color.black);
+		else
+			board[x][y].setBackground(Color.white);
 	}
 	
 	private void SetBoardEnable(Boolean inp) {

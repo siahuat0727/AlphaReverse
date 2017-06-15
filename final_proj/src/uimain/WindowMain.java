@@ -22,7 +22,6 @@ public class WindowMain {
 		btnMul.addActionListener(new MainEventListener());
 		
 		//init frame
-		frame.setTitle("Alpha Reverse");
 		frame.setSize(805,600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null); //set window form to center screen
