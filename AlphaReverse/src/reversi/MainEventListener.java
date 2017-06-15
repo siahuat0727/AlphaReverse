@@ -1,27 +1,17 @@
 package reversi;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 
-public class MainEventListener implements ActionListener
-{
-	public void actionPerformed(ActionEvent e)
-	{
-		String command = e.getActionCommand();
-		System.out.println(command);
-		
-		if( command.equals("Single Player"))
-		{
-			SingleWindow check = new SingleWindow();
+public class MainEventListener implements ActionListener {
+	public void actionPerformed(ActionEvent e) {
+		String command = e.getActionCommand(); //get button command
+		if( command.equals("Single Player")) {
+			WindowSingle check = new WindowSingle();
+			check.setLocationRelativeTo(null);
 		}
-		else if( command.equals("Multi Player"))
-		{
-			MultiWindow check = new MultiWindow();
-		}
-		
-		
-	}
-	
-	
+		else if( command.equals("Multi Player")) {
+			WindowMulti check = new WindowMulti();
+			check.setLocationRelativeTo(null);
+		}	
+	}	
 }

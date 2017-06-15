@@ -1,4 +1,4 @@
-package uimain;
+package reversi;
 
 import javax.swing.*;
 import java.awt.*;
@@ -79,16 +79,16 @@ public class WindowMultiClient extends JFrame implements ActionListener {
 		String temp = LAN.Read();
 		if (temp.equals("WHITE")) {
 			temp = LAN.Read();
+			SetBoardEnable(true);
 			myColor = Color.white;
 			yourColor = Color.black;
-			SetBoardEnable(true);
 			UpdateGameBoard(temp);
 		}
 		if (temp.equals("BLACK")) {
 			SetBoardEnable(true);
 			myColor = Color.black;
 			yourColor = Color.white;
-			UpdateGameBoard(temp);
+			//UpdateGameBoard(temp);
 		}
 	}
 

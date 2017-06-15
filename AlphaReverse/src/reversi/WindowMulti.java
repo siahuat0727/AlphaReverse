@@ -87,6 +87,12 @@ public class WindowMulti extends JFrame implements ActionListener {
 		txtYourIp.setHorizontalAlignment(0);
 		txtYourIp.setBackground(Color.black);
 		txtYourIp.setForeground(Color.green);
+		try {
+			txtYourIp.setText(InetAddress.getLocalHost().getHostAddress());
+		} 
+		catch (Exception e) {
+			System.out.println("GET IP ERROR:" + e);
+		}
 
 		// init label (frame background)
 		imgMain.setSize(800, 600);

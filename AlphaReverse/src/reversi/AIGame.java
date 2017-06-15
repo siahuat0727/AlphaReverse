@@ -1,4 +1,4 @@
-package testsingleplayer;
+package reversi;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,14 +18,13 @@ public class AIGame extends JFrame implements ActionListener
 	
 	static Object lock = new Object();
 	
-	
 	JButton undo = new JButton("UNDO");
 	JButton restart = new JButton("RESTART");
 	JButton black = new JButton("Black");
 	JButton white = new JButton("White");
 	JLabel status = new JLabel("Please pick a colour to start");
 	
-	JButton boardc[][] = new JButton[SingleWindow.lol][SingleWindow.lol];
+	JButton boardc[][] = new JButton[WindowSingle.lol][WindowSingle.lol];
 	JPanel gameboard = new JPanel();
 	
 	public AIGame(int size , int difficulty)
@@ -62,7 +61,7 @@ public class AIGame extends JFrame implements ActionListener
 		
 		black.addActionListener(this);
 		white.addActionListener(this);
-		undo.addActionListener(this);
+		restart.addActionListener(this);
 		
 		gameboard.setLayout(new GridLayout(bsize,bsize));
 		int i = 0 , j = 0 ;
@@ -92,7 +91,7 @@ public class AIGame extends JFrame implements ActionListener
 		//board button 
 		//using panel to fit the button inside
 		//the button has no size thus 
-		
+		noMove = 0;
 		Board.initialize(bsize);
 		if( color == -1 ) 
 		{
@@ -112,12 +111,13 @@ public class AIGame extends JFrame implements ActionListener
 			{
 				if( Board.board[i][j] == Board.BLACK ) boardc[i][j].setBackground( Color.BLACK);
 				else if(Board.board[i][j] == Board.WHITE ) boardc[i][j].setBackground( Color.WHITE);
-				else boardc[i][j].setEnabled(true);
+				else 
+				{
+					boardc[i][j].setBackground(null);
+					boardc[i][j].setEnabled(false);
+				}
 			}
 		}
-
-		System.out.println("asxdvgdfd");
-
 	}
 	
 	public class Thr extends Thread
@@ -131,32 +131,46 @@ public class AIGame extends JFrame implements ActionListener
 			
 			while(true)
 			{
-				if( pressed == false )
+				
+				if( noMove == 2)
 				{
-					while(true) 
-					{
-						count ++;
-						synchronized( lock )
-						{
-							if( pressed == true )
-							{
-								break;
-							}
-						}
-					}
+					status.setText("Game is over with white " + Board.whiteCount + " vs black " + Board.blackCount);
+					break;
 				}
 				
-				x = Integer.parseInt(command.substring(1, 2));
-				y = Integer.parseInt(command.substring(2));
 				
-				System.out.println("hi " + x + " " + y);
 				
 				if( ReversiRule.canIgo( color ) == false)
 				{
 					noMove++;
 				}
 				else
-				{
+				{	
+					for(Position pos : Board.possiblePos)
+					{
+						boardc[pos.getX()][pos.getY()].setEnabled(true);
+						boardc[pos.getX()][pos.getY()].setBackground( Color.pink );
+					}
+					if( pressed == false )
+					{
+						while(true) 
+						{
+							count ++;
+							synchronized( lock )
+							{
+								if( pressed == true )
+								{
+									break;
+								}
+							}
+						}
+					}
+					x = Integer.parseInt(command.substring(1, 2));
+					y = Integer.parseInt(command.substring(2));
+					
+					System.out.println("hi " + x + " " + y);
+					
+					noMove = 0;
 					ReversiRule.goToThis();
 					ReversiRule.go(x, y, color );
 				}
@@ -175,6 +189,12 @@ public class AIGame extends JFrame implements ActionListener
 							boardc[i][j].setEnabled(false);
 							boardc[i][j].setBackground( Color.WHITE);
 						}
+						else
+						{
+							boardc[i][j].setEnabled(false);
+							boardc[i][j].setBackground( null );
+						}
+						
 					}
 				}
 				status.setText("white " + Board.whiteCount + " vs black " + Board.blackCount);
@@ -190,6 +210,12 @@ public class AIGame extends JFrame implements ActionListener
 				}
 				
 				Board.printBoard();
+				
+				if( noMove == 2)
+				{
+					status.setText("Game is over with white " + Board.whiteCount + " vs black " + Board.blackCount);
+					break;
+				}
 				
 				if( ReversiRule.canIgo(-color) == false)
 				{
@@ -233,9 +259,10 @@ public class AIGame extends JFrame implements ActionListener
 		command = e.getActionCommand();
 		System.out.println("asd");
 		
-		if( command.equals("UNDO") )
+		if( command.equals("RESTART") )
 		{
-			
+			System.out.println("Game restarted");
+			startGame();
 		}
 		else if( command.equals("Black") ) 
 		{

@@ -40,3 +40,12 @@ public class AI_easy extends ReversiRule {
 
 	}
 }
+
+
+
+
+
+
+
+
+

@@ -4,7 +4,7 @@ public class AI {
 
 	public static void go(int color, int AI_level) {
 		switch (AI_level) {
-		default:
+		case 1:
 			AI_easy.go(color);
 			break;
 		case 2:

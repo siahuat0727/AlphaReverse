@@ -95,7 +95,15 @@ public class WindowMultiServer extends JFrame implements ActionListener {
 			System.out.println("Host - White");
 			LAN.Read();
 			LAN.Write("BLACK", IpAddress);
-			LAN.Read();
+			//Read Set************************
+			Thread ReadData = new Thread() {
+				@Override
+				public void run() {
+					temp = LAN.Read();
+					UpdateGameBoard(temp);
+				}
+			};
+			ReadData.start();
 			SetBoardEnable(true);
 		}
 	}
