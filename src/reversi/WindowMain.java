@@ -7,9 +7,10 @@ import javax.swing.JLabel;
 
 public class WindowMain {
 
+	static JFrame frame= new JFrame();
+	
 	public static void main(String[] args) {
 		//variables
-		JFrame frame= new JFrame();
 		JButton btnSin = new JButton("");
 		JButton btnMul = new JButton("");
 		ImageIcon icon = new ImageIcon("Resources/Main.png");
@@ -49,5 +50,9 @@ public class WindowMain {
 		frame.add(btnMul);
 		frame.add(imgMain);
 		frame.setVisible(true);
+	}
+	
+	public static void Close() {
+		frame.setVisible(false);
 	}
 }

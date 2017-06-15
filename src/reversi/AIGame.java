@@ -18,11 +18,15 @@ public class AIGame extends JFrame implements ActionListener
 	
 	static Object lock = new Object();
 	
-	JButton undo = new JButton("UNDO");
-	JButton restart = new JButton("RESTART");
-	JButton black = new JButton("Black");
-	JButton white = new JButton("White");
+	JButton undo = new JButton("");
+	JButton restart = new JButton("");
+	JButton black = new JButton("");
+	JButton white = new JButton("");
 	JLabel status = new JLabel("Please pick a colour to start");
+	ImageIcon imgBlack = new ImageIcon("Resources/BtnBlack.png");
+	ImageIcon imgWhite = new ImageIcon("Resources/BtnWhite.png");
+	ImageIcon imgUndo = new ImageIcon("Resources/BtnUndo.png");
+	ImageIcon imgRestart = new ImageIcon("Resources/BtnRestart.png");
 	
 	JButton boardc[][] = new JButton[WindowSingle.lol][WindowSingle.lol];
 	JPanel gameboard = new JPanel();
@@ -33,25 +37,57 @@ public class AIGame extends JFrame implements ActionListener
 		AI_level = difficulty;
 		System.out.println("size is " + size + " diff is " + difficulty );
 		
-		setSize(800,600);
+		// init window form
 		setVisible(true);
+		setSize(805, 600);
 		setLayout(null);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null); // set window form to center screen
+		setResizable(false);
+		setTitle("Single Player");
 		
 		//button included in this ui
 		//undo , restart , black , white , pause
 		
+		ImageIcon icon = new ImageIcon("Resources/MultiGame.png");
+		JLabel imgMain = new JLabel(icon);
 		
-		undo.setSize(200, 80);
-		restart.setSize(200, 80);
-		black.setSize(200, 40);
-		white.setSize(200, 40);
+		// init label (frame background)
+		imgMain.setSize(800, 600);
+		
+		undo.setSize(250, 64);
+		undo.setLocation(10,500);
+		undo.setIcon(imgUndo);
+		undo.setHorizontalTextPosition(0);
+		undo.setActionCommand("UNDO");
+		undo.addActionListener(this);
+		
+		restart.setSize(250, 64);
+		restart.setLocation(540,500);
+		restart.setIcon(imgRestart);
+		restart.setHorizontalTextPosition(0);
+		restart.setActionCommand("RESTART");
+		restart.addActionListener(this);
+		
+		black.setSize(250, 64);
+		black.setLocation(10, 10);
+		black.setIcon(imgBlack);
+		black.setHorizontalTextPosition(0);
+		black.setActionCommand("Black");
+		black.addActionListener(this);
+		
+		white.setSize(250, 64);
+		white.setLocation(270,10);
+		white.setIcon(imgWhite);
+		white.setHorizontalTextPosition(0);
+		white.setActionCommand("White");
+		white.addActionListener(this);
+		
 		status.setSize(500,40);
+		status.setForeground(Color.red);
+		status.setFont(status.getFont().deriveFont(24.0f));
+		status.setLocation(240, 81);
 		
-		undo.setLocation(0,0);
-		restart.setLocation(200,0);
-		black.setLocation(400,0);
-		white.setLocation(400,40);
-		status.setLocation(0, 81);
 		
 		add(undo);
 		add(restart);
@@ -59,9 +95,6 @@ public class AIGame extends JFrame implements ActionListener
 		add(white);
 		add(status);
 		
-		black.addActionListener(this);
-		white.addActionListener(this);
-		restart.addActionListener(this);
 		
 		gameboard.setLayout(new GridLayout(bsize,bsize));
 		int i = 0 , j = 0 ;
@@ -83,7 +116,12 @@ public class AIGame extends JFrame implements ActionListener
 		//panel will auto resize and relocate
 		gameboard.setSize(bsize*40, bsize*40);
 		gameboard.setLocation((800 - bsize*40)/2 , 130);
+	
+		
 		add(gameboard);
+		
+
+		add(imgMain);
 	}
 	
 	
@@ -267,6 +305,8 @@ public class AIGame extends JFrame implements ActionListener
 		}
 		else if( command.equals("Black") ) 
 		{
+			black.setVisible(false);
+			white.setVisible(false);
 			System.out.println(command);
 			color = -1;
 			startGame();
@@ -275,6 +315,8 @@ public class AIGame extends JFrame implements ActionListener
 		}
 		else if( command.equals("White") )
 		{
+			white.setVisible(false);
+			black.setVisible(false);
 			System.out.println(command);
 			color = 1;
 			startGame();

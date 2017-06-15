@@ -114,20 +114,24 @@ public class WindowMulti extends JFrame implements ActionListener {
 			if (ip.equals("")) {
 				WindowMultiGame game = new WindowMultiGame("localhost", "HOST");
 				game.setLocationRelativeTo(null);
+				setVisible(false);
 			} 
 			else {
 				WindowMultiGame game = new WindowMultiGame(ip, "HOST");
 				game.setLocationRelativeTo(null);
+				setVisible(false);
 			}
 		} 
 		else if (command.equals("CLIENT")) {
 			if (ip.equals("")) {
 				WindowMultiGame game = new WindowMultiGame("localhost", "CLIENT");
 				game.setLocationRelativeTo(null);
+				setVisible(false);
 			} 
 			else {
 				WindowMultiGame game = new WindowMultiGame(ip, "CLIENT");
 				game.setLocationRelativeTo(null);
+				setVisible(false);
 			}
 		}
 	}
