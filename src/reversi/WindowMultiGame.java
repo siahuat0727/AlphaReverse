@@ -176,6 +176,10 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 		}
 	}
 
+	private void GameOver(){
+		System.out.println("game over!!");
+	}
+	
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		if (command.equals("BLACK")) {
@@ -200,8 +204,15 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 				@Override
 				public void run() {
 					temp = LAN.Read();
-					if (temp.equals("cannot go")) {
-
+					if(temp.equals("game over")){
+						GameOver();
+					}
+					else if (temp.equals("cannot go")) {
+						UpdateWhereCanGo();
+						if(!ReversiRule.IcanGo(myColor)){
+							GameOver();
+							LAN.Write("game over", IpAddress);
+						}
 					} else {
 						UpdateGameBoard(temp, yourColor);
 						UpdateWhereCanGo();
