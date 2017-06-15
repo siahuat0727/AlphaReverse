@@ -110,24 +110,23 @@ public class WindowMulti extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand(); // get button command
 		String ip = txtYourIp.getText();
-		System.out.println(ip);
 		if (command.equals("HOST")) {
 			if (ip.equals("")) {
-				WindowMultiServer game = new WindowMultiServer("localhost");
+				WindowMultiGame game = new WindowMultiGame("localhost", "HOST");
 				game.setLocationRelativeTo(null);
 			} 
 			else {
-				WindowMultiServer game = new WindowMultiServer(ip);
+				WindowMultiGame game = new WindowMultiGame(ip, "HOST");
 				game.setLocationRelativeTo(null);
 			}
 		} 
 		else if (command.equals("CLIENT")) {
 			if (ip.equals("")) {
-				WindowMultiClient game = new WindowMultiClient("localhost");
+				WindowMultiGame game = new WindowMultiGame("localhost", "CLIENT");
 				game.setLocationRelativeTo(null);
 			} 
 			else {
-				WindowMultiClient game = new WindowMultiClient(ip);
+				WindowMultiGame game = new WindowMultiGame(ip, "CLIENT");
 				game.setLocationRelativeTo(null);
 			}
 		}
