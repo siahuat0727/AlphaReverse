@@ -12,8 +12,9 @@ public class ReversiRule {
 
 	private static ArrayList<Position> predictPossiblePos = new ArrayList<Position>();
 
-	// 霂瑕�＆靽砲������ossiblePos������甇孑ethod
+	// ���蕭���豲嚙踐冀嚙踐�嚙踐祗嚙踐�蕭嚙踝�ssiblePos嚙踝蕭�豰蕭嚙踝�蕭���蕭����thod
 	public static boolean go(int xPos, int yPos, int color) {
+		System.out.println("go receive "+xPos+" "+yPos + " " + getName(color));
 		return go(xPos, yPos, color, false);
 	}
 	
@@ -83,9 +84,12 @@ public class ReversiRule {
 			return false;
 	}
 
-	// ��color��銝隞亥粥銝�甇伐��活韏啣�� 銝�摰�摰� 閬�餈ethod
 	public static boolean canIgo(int color){
 		return canIgo(color, Board.history);
+	}
+	
+	protected static boolean IcanGo(int color){
+		return !Board.possiblePos.isEmpty();
 	}
 	
 	protected static boolean canIgo(int color, ArrayList<Position> history){
@@ -103,9 +107,11 @@ public class ReversiRule {
 			Board.possiblePos.clear();
 
 		for (int x = 0; x < Board.SIZE; x++)
-			for (int y = 0; y < Board.SIZE; y++)
+			for (int y = 0; y < Board.SIZE; y++){
+				System.out.println("check "+x +" "+y);
 				if (go(x, y, color, true))
 					Board.possiblePos.add(new Position(x, y));
+			}
 
 		return Board.possiblePos;
 	}
