@@ -38,4 +38,13 @@ public class LAN {
 			System.out.println("WRITE ERROR:" + e.getMessage());
 		}
 	}
+	
+	public static void delay(int inp) {
+		try {
+			Thread.sleep(inp);
+		}
+		catch (Exception e) {
+			System.out.println("SLEEP ERRPR:" + e);
+		}
+	}
 }
