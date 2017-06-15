@@ -6,33 +6,32 @@ import java.awt.event.*;
 
 public class WindowMultiClient extends JFrame implements ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private int bsize;
-	private int color;
-	private String IpAddress;
-	
-	JButton btnUndo;
-	JButton btnRestart;
+	private String IpAddress, temp;
+
 	JButton btnSurrender;
 	JButton btnStart;
 	JButton board[][];
 	JPanel gameboard;
+	Color myColor, yourColor;
 
-	public WindowMultiClient( String inpIp) {
+	public WindowMultiClient(String inpIp) {
 		// init data
 		bsize = 8;
 		IpAddress = inpIp;
-		
+
 		// variables
-		btnUndo = new JButton("Undo");
-		btnRestart = new JButton("Restart");
 		btnSurrender = new JButton("Surrender");
 		btnStart = new JButton("Start Game");
 		board = new JButton[bsize][bsize];
 		gameboard = new JPanel();
 
 		// add controls to listener
-		btnUndo.addActionListener(this);
-		btnRestart.addActionListener(this);
 		btnSurrender.addActionListener(this);
 		btnStart.addActionListener(this);
 
@@ -41,26 +40,12 @@ public class WindowMultiClient extends JFrame implements ActionListener {
 		setVisible(true);
 		setLayout(null);
 
-		// init button undo
-		btnUndo.setLocation(0, 0);
-		btnUndo.setSize(200, 80);
-		btnUndo.setEnabled(false);
-		btnUndo.setBackground(Color.red);
-		btnUndo.setActionCommand("UNDO");
-
-		// init button restart
-		btnRestart.setLocation(200, 0);
-		btnRestart.setSize(200, 80);
-		btnRestart.setEnabled(false);
-		btnRestart.setBackground(Color.red);
-		btnRestart.setActionCommand("RESTART");
-
 		// init button surrender
 		btnSurrender.setLocation(400, 0);
 		btnSurrender.setSize(200, 80);
 		btnSurrender.setEnabled(false);
 		btnSurrender.setBackground(Color.red);
-		btnSurrender.setActionCommand("SURRENDER");		
+		btnSurrender.setActionCommand("SURRENDER");
 
 		// init button black
 		btnStart.setLocation(600, 0);
@@ -85,36 +70,34 @@ public class WindowMultiClient extends JFrame implements ActionListener {
 		add(gameboard);
 
 		// add controls to window
-		add(btnUndo);
-		add(btnRestart);
 		add(btnSurrender);
 		add(btnStart);
 	}
 
 	public void startGame() {
-		LAN.Write("CONNECTED" , IpAddress);
+		LAN.Write("CONNECTED", IpAddress);
 		String temp = LAN.Read();
 		if (temp.equals("WHITE")) {
 			temp = LAN.Read();
+			myColor = Color.white;
+			yourColor = Color.black;
 			SetBoardEnable(true);
 			UpdateGameBoard(temp);
-			color = -1;
 		}
 		if (temp.equals("BLACK")) {
 			SetBoardEnable(true);
+			myColor = Color.black;
+			yourColor = Color.white;
 			UpdateGameBoard(temp);
-			color = 1 ;
 		}
 	}
 
 	private void UpdateGameBoard(String inp) {
-		System.out.println("CLIENT UPDATE: " + inp);
-		int x = Integer.parseInt(inp.substring(1, 2)) ;
-		int y = Integer.parseInt(inp.substring(2)) ;		
-		if( color == 1 )
-			board[x][y].setBackground(Color.white);
-		else
-			board[x][y].setBackground(Color.black);
+		System.out.println("SERVER UPDATE: " + inp);
+		int x = Integer.parseInt(inp.substring(1, 2));
+		int y = Integer.parseInt(inp.substring(2));
+
+		board[x][y].setBackground(yourColor);
 	}
 
 	private void SetBoardEnable(Boolean inp) {
@@ -126,21 +109,18 @@ public class WindowMultiClient extends JFrame implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		String command = e.getActionCommand();		
+		String command = e.getActionCommand();
 		if (command.equals("START")) {
 			startGame();
-		}
-		else if (command.substring(0, 5).equals("BOARD")) {
-			if( color == -1 )
-				((JButton) e.getSource()).setBackground(Color.white);
-			else if( color == 1)
-				((JButton) e.getSource()).setBackground(Color.black);
-
+		} else if (command.substring(0, 5).equals("BOARD")) {
+			((JButton) e.getSource()).setBackground(myColor);
 			LAN.Write(((JButton) e.getSource()).getActionCommand().substring(5), IpAddress);
 			SetBoardEnable(false);
-			String temp = LAN.Read();
+			temp = LAN.Read();
 			UpdateGameBoard(temp);
 			SetBoardEnable(true);
+		} else if (command.equals("SURRENDER")) {
+
 		}
 	}
 }

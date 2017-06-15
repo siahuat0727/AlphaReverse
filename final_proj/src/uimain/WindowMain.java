@@ -17,15 +17,12 @@ public class WindowMain {
 		ImageIcon imgMul = new ImageIcon("Resources/BtnMulti.png");
 		JLabel imgMain = new JLabel(icon);
 		
-		//add controls to listener
-		btnSin.addActionListener(new MainEventListener());
-		btnMul.addActionListener(new MainEventListener());
-		
 		//init frame
 		frame.setSize(805,600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null); //set window form to center screen
 		frame.setResizable(false);
+		frame.setTitle("Alpha Reverse");
 		
 		//init button (single player)		
 		btnSin.setLocation(40,440);
@@ -33,6 +30,7 @@ public class WindowMain {
 		btnSin.setIcon(imgSin);
 		btnSin.setHorizontalTextPosition(0);
 		btnSin.setActionCommand("Single Player");
+		btnSin.addActionListener(new MainEventListener());
 		
 		//init button (multi player)
 		btnMul.setLocation(40,490);
@@ -40,6 +38,7 @@ public class WindowMain {
 		btnMul.setIcon(imgMul);
 		btnSin.setHorizontalTextPosition(0);
 		btnMul.setActionCommand("Multi Player");
+		btnMul.addActionListener(new MainEventListener());
 		
 		//init label (frame background)
 		imgMain.setSize(800, 600);

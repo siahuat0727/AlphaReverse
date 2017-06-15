@@ -5,30 +5,29 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import java.net.*;
-import java.io.*;
-
 public class WindowMultiServer extends JFrame implements ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private int bsize;
-	private int color;
-	private String IpAddress;
-	JButton btnUndo;
-	JButton btnRestart;
+	private String IpAddress, temp;
+
 	JButton btnSurrender;
 	JButton btnBlack;
 	JButton btnWhite;
 	JButton board[][];
 	JPanel gameboard;
+	Color myColor, yourColor;
 
-	public WindowMultiServer( String inpIP ) {
+	public WindowMultiServer(String inpIP) {
 		// init data
 		bsize = 8;
 		IpAddress = inpIP;
-		
+
 		// variables
-		btnUndo = new JButton("Undo");
-		btnRestart = new JButton("Restart");
 		btnSurrender = new JButton("Surrender");
 		btnBlack = new JButton("Choose Black");
 		btnWhite = new JButton("Choose White");
@@ -36,8 +35,6 @@ public class WindowMultiServer extends JFrame implements ActionListener {
 		gameboard = new JPanel();
 
 		// add controls to listener
-		btnUndo.addActionListener(this);
-		btnRestart.addActionListener(this);
 		btnSurrender.addActionListener(this);
 		btnBlack.addActionListener(this);
 		btnWhite.addActionListener(this);
@@ -46,20 +43,6 @@ public class WindowMultiServer extends JFrame implements ActionListener {
 		setSize(800, 600);
 		setVisible(true);
 		setLayout(null);
-
-		// init button undo
-		btnUndo.setLocation(0, 0);
-		btnUndo.setSize(200, 80);
-		btnUndo.setEnabled(false);
-		btnUndo.setBackground(Color.red);
-		btnUndo.setActionCommand("UNDO");
-
-		// init button restart
-		btnRestart.setLocation(200, 0);
-		btnRestart.setSize(200, 80);
-		btnRestart.setEnabled(false);
-		btnRestart.setBackground(Color.red);
-		btnRestart.setActionCommand("RESTART");
 
 		// init button surrender
 		btnSurrender.setLocation(400, 0);
@@ -96,25 +79,22 @@ public class WindowMultiServer extends JFrame implements ActionListener {
 		add(gameboard);
 
 		// add controls to window
-		add(btnUndo);
-		add(btnRestart);
 		add(btnSurrender);
 		add(btnBlack);
 		add(btnWhite);
 	}
 
-	public void startGame(int col) {
+	public void startGame(Color color) {
 		System.out.println("Starting Game...");
-		if (col == -1) {
+		if (color == Color.black) {
 			System.out.println("Host - Black");
 			LAN.Read();
-			LAN.Write("WHITE" , IpAddress);
+			LAN.Write("WHITE", IpAddress);
 			SetBoardEnable(true);
-		}		
-		else if (col == 1) {
-			System.out.println("Host = White");
+		} else if (color == Color.white) {
+			System.out.println("Host - White");
 			LAN.Read();
-			LAN.Write("BLACK" , IpAddress);
+			LAN.Write("BLACK", IpAddress);
 			LAN.Read();
 			SetBoardEnable(true);
 		}
@@ -123,44 +103,42 @@ public class WindowMultiServer extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		if (command.equals("BLACK")) {
-			color = -1;
-			startGame(color);
-		} 
-		else if (command.equals("WHITE")) {
-			color = 1;
-			startGame(color);
-		}
-		else if (command.substring(0, 5).equals("BOARD")) {
-			if( color == -1 )
-				((JButton) e.getSource()).setBackground(Color.black);
-			else if( color == 1)
-				((JButton) e.getSource()).setBackground(Color.white);
+			btnBlack.setEnabled(false);
+			btnWhite.setEnabled(false);
+			myColor = Color.black;
+			yourColor = Color.white;
+			startGame(myColor);
+		} else if (command.equals("WHITE")) {
+			btnBlack.setEnabled(false);
+			btnWhite.setEnabled(false);
+			myColor = Color.white;
+			yourColor = Color.black;
+			startGame(myColor);
+		} else if (command.substring(0, 5).equals("BOARD")) {
+			((JButton) e.getSource()).setBackground(myColor);
 			LAN.Write(((JButton) e.getSource()).getActionCommand().substring(5), IpAddress);
 			SetBoardEnable(false);
-			String temp = LAN.Read();
+			temp = LAN.Read();
 			UpdateGameBoard(temp);
 			SetBoardEnable(true);
+		} else if (command.equals("SURRENDER")) {
+
 		}
 	}
-	
+
 	private void UpdateGameBoard(String inp) {
 		System.out.println("SERVER UPDATE: " + inp);
-		int x = Integer.parseInt(inp.substring(1, 2)) ;
-		int y = Integer.parseInt(inp.substring(2)) ;
-		
-		if( color == 1 )
-			board[x][y].setBackground(Color.black);
-		else
-			board[x][y].setBackground(Color.white);
+		int x = Integer.parseInt(inp.substring(1, 2));
+		int y = Integer.parseInt(inp.substring(2));
+
+		board[x][y].setBackground(yourColor);
 	}
-	
+
 	private void SetBoardEnable(Boolean inp) {
 		for (int i = 0; i < bsize; i++) {
-			for (int j = 0; j < bsize; j++ ) {		
+			for (int j = 0; j < bsize; j++) {
 				board[i][j].setEnabled(inp);
 			}
 		}
 	}
-	
-
 }
