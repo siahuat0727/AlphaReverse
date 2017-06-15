@@ -195,7 +195,7 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 		} 
 		else if (command.substring(0, 5).equals("BOARD")) {
 			UpdateGameBoard(((JButton) e.getSource()).getActionCommand().substring(5), myColor);
-
+			SetBoardEnable(false);
 			LAN.Write(((JButton) e.getSource()).getActionCommand().substring(5), IpAddress);
 			//Read Set************************
 			Thread ReadData = new Thread() {
@@ -231,6 +231,7 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 				boardc[i][j] = Board.board[i][j];
 		
 		UpdateBoardBackground();
+		SetBoardEnable(false);
 	}
 
 	private void UpdateBoardBackground(){
@@ -247,6 +248,17 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 		for(Position pos : Board.possiblePos)
 			boardc[pos.getX()][pos.getY()] = enableColor;
 		UpdateBoardBackground();
+		UpdateWhereCanClick();
+	}
+	
+	private void UpdateWhereCanClick(){
+		for(int i = 0; i < bsize; ++i)
+			for(int j = 0; j < bsize; ++j)
+				if(boardc[i][j] != enableColor)
+					board[i][j].setEnabled(false);
+				else
+					board[i][j].setEnabled(true);
+		
 	}
 
 	private void SetBoardEnable(Boolean inp) {
