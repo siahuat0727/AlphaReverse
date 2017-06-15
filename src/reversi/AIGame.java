@@ -61,6 +61,7 @@ public class AIGame extends JFrame implements ActionListener
 		undo.setHorizontalTextPosition(0);
 		undo.setActionCommand("UNDO");
 		undo.addActionListener(this);
+		undo.setEnabled(false);
 		
 		restart.setSize(250, 64);
 		restart.setLocation(540,500);
@@ -68,6 +69,7 @@ public class AIGame extends JFrame implements ActionListener
 		restart.setHorizontalTextPosition(0);
 		restart.setActionCommand("RESTART");
 		restart.addActionListener(this);
+		restart.setEnabled(false);
 		
 		black.setSize(250, 64);
 		black.setLocation(10, 10);
@@ -88,15 +90,14 @@ public class AIGame extends JFrame implements ActionListener
 		status.setFont(status.getFont().deriveFont(24.0f));
 		status.setLocation(240, 81);
 		
-		
 		add(undo);
 		add(restart);
 		add(black);
 		add(white);
 		add(status);
 		
-		
 		gameboard.setLayout(new GridLayout(bsize,bsize));
+		
 		int i = 0 , j = 0 ;
 		for( i = 0 ; i < bsize ; i++)
 		{
@@ -117,10 +118,7 @@ public class AIGame extends JFrame implements ActionListener
 		gameboard.setSize(bsize*40, bsize*40);
 		gameboard.setLocation((800 - bsize*40)/2 , 130);
 	
-		
 		add(gameboard);
-		
-
 		add(imgMain);
 	}
 	
@@ -136,12 +134,21 @@ public class AIGame extends JFrame implements ActionListener
 		{
 			status.setText("You are black , you go first");
 		}
-		else
+		else if( color == 1)
 		{
 			ReversiRule.canIgo(Board.BLACK);
 			AI.go(Board.BLACK, AI_level);
 			Board.printBoard();
-			status.setText("You are white , now is not your turn");
+			//status.setText("You are white , now is not your turn");
+			status.setText("white " + Board.whiteCount + " vs black " + Board.blackCount);
+		}
+		else
+		{
+			status.setText("Please pick a colour to start");
+			black.setVisible(true);
+			white.setVisible(true);
+			undo.setEnabled(false);
+			restart.setEnabled(false);
 		}
 		
 		for( int i = 0 ; i < bsize ; i++)
@@ -170,14 +177,14 @@ public class AIGame extends JFrame implements ActionListener
 			
 			while(true)
 			{
+				restart.setEnabled(true);
+				undo.setEnabled(true);
 				
 				if( noMove == 2)
 				{
 					status.setText("Game is over with white " + Board.whiteCount + " vs black " + Board.blackCount);
 					break;
 				}
-				
-				
 				
 				if( ReversiRule.canIgo( color ) == false)
 				{
@@ -238,10 +245,12 @@ public class AIGame extends JFrame implements ActionListener
 				}
 				status.setText("white " + Board.whiteCount + " vs black " + Board.blackCount);
 				
-
+				restart.setEnabled(false);
+				undo.setEnabled(false);
+				
 				try
 				{
-					Thread. sleep(1000);
+					Thread.sleep(1000);
 				}
 				catch(InterruptedException ex)
 				{
@@ -301,6 +310,7 @@ public class AIGame extends JFrame implements ActionListener
 		if( command.equals("RESTART") )
 		{
 			System.out.println("Game restarted");
+			color = 0;
 			startGame();
 		}
 		else if( command.equals("Black") ) 
