@@ -30,7 +30,9 @@ public class ReversiRule {
 		if (!checkOnly)
 			history.set(history.size() - 1, new Position(xPos, yPos));
 
-		ArrayList<Position> posToReverse = new ArrayList<Position>(Board.SIZE);
+		Position[] posToReverse = new Position[Board.SIZE];
+		for(int i = 0; i < Board.SIZE; ++i)
+			posToReverse[i] = new Position(-1, -1);
 
 		boolean canMove = false;
 		for (int dir = 0; dir < 8; dir++) {
@@ -44,8 +46,8 @@ public class ReversiRule {
 				}
 				if (Board.board[x][y] == -color) {
 					curCount++;
-					posToReverse.get(curCount).setX(x);
-					posToReverse.get(curCount).setY(y);
+					posToReverse[curCount].setX(x);
+					posToReverse[curCount].setY(y);
 				} else if (Board.board[x][y] == 0) {
 					curCount = 0;
 					break;
@@ -64,8 +66,8 @@ public class ReversiRule {
 					Board.whiteCount -= curCount;
 				}
 				while (curCount > 0) {
-					x = posToReverse.get(curCount).getX();
-					y = posToReverse.get(curCount).getY();
+					x = posToReverse[curCount].getX();
+					y = posToReverse[curCount].getY();
 					Board.board[x][y] *= -1;
 					curCount--;
 				}
@@ -136,7 +138,9 @@ public class ReversiRule {
 	protected static void goToThis(ArrayList<Position> history) {
 		Board.startAgain();
 		int historyColor = Board.BLACK;
-
+		history.get(history.size()-1).setX(-1);
+		history.get(history.size()-1).setY(-1);
+		printHistory();
 		for (Position move : history) {
 			go(move.getX(), move.getY(), historyColor);
 			historyColor *= -1;
@@ -245,7 +249,6 @@ public class ReversiRule {
 				}
 			}
 		}
-
 	}
 
 	protected static int getWeight(int color) {
