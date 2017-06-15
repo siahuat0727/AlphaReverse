@@ -200,28 +200,7 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 			LAN.Write(((JButton) e.getSource()).getActionCommand().substring(5), IpAddress);
 
 			// Read Set************************
-			Thread ReadData = new Thread() {
-				@Override
-				public void run() {
-					temp = LAN.Read();
-					if(temp.equals("game over")){
-						GameOver();
-					}
-					else if (temp.equals("cannot go")) {
-						UpdateWhereCanGo();
-						if(!ReversiRule.IcanGo(myColor)){
-							GameOver();
-							LAN.Write("game over", IpAddress);
-						}
-					} else {
-						UpdateGameBoard(temp, yourColor);
-						UpdateWhereCanGo();
-						if (!ReversiRule.IcanGo(myColor)) {
-							LAN.Write("cannot go", IpAddress);
-						}
-					}
-				}
-			};
+			Thread ReadData = new Thr();
 			ReadData.start();
 			// **********************************
 		} else if (command.equals("START")) {
@@ -231,14 +210,37 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 
 		}
 	}
-
+	Thread ReadData2;
+	public class Thr extends Thread{
+		@Override
+		public void run() {
+			temp = LAN.Read();
+			if(temp.equals("game over")){
+				GameOver();
+			}
+			else if (temp.equals("cannot go")) {
+				UpdateWhereCanGo();
+				if(!ReversiRule.IcanGo(myColor)){
+					GameOver();
+					LAN.Write("game over", IpAddress);
+				}
+			} else {
+				UpdateGameBoard(temp, yourColor);
+				UpdateWhereCanGo();
+				if (!ReversiRule.IcanGo(myColor)) {
+					LAN.Write("cannot go", IpAddress);
+					ReadData2 = new Thr();
+					return;
+				}
+			}
+		}
+	}
 	private void UpdateGameBoard(String inp, int color) {
 		System.out.println("SERVER UPDATE: " + inp);
 		int x = Integer.parseInt(inp.substring(1, 2));
 		int y = Integer.parseInt(inp.substring(2));
 
 		ReversiRule.go(x, y, color);
-		Board.printBoard();
 		for (int i = 0; i < bsize; ++i)
 			for (int j = 0; j < bsize; ++j)
 				boardc[i][j] = Board.board[i][j];
