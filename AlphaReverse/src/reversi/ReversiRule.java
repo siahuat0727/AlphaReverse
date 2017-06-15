@@ -138,9 +138,7 @@ public class ReversiRule {
 	protected static void goToThis(ArrayList<Position> history) {
 		Board.startAgain();
 		int historyColor = Board.BLACK;
-		history.get(history.size()-1).setX(-1);
-		history.get(history.size()-1).setY(-1);
-		printHistory();
+		history.set(history.size()-1, new Position(-1, -1)); // last element is always unused and it will cause wrong when call AI!
 		for (Position move : history) {
 			go(move.getX(), move.getY(), historyColor);
 			historyColor *= -1;
