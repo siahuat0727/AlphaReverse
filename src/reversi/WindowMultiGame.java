@@ -230,6 +230,7 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 				if (!ReversiRule.IcanGo(myColor)) {
 					LAN.Write("cannot go", IpAddress);
 					ReadData2 = new Thr();
+					ReadData2.start();
 					return;
 				}
 			}
