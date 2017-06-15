@@ -12,7 +12,7 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private int bsize;
+	private int bsize = 8;
 	private String IpAddress, temp;
 
 	JButton btnSurrender = new JButton("");
@@ -21,16 +21,19 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 	JButton btnStart = new JButton("");
 	JButton board[][];
 	JPanel gameboard;
-	Color myColor, yourColor;
 	ImageIcon imgBlack = new ImageIcon("Resources/BtnBlack.png");
 	ImageIcon imgWhite = new ImageIcon("Resources/BtnWhite.png");
 	ImageIcon imgStart = new ImageIcon("Resources/BtnStart.png");
 	ImageIcon imgSurrender = new ImageIcon("Resources/BtnSurrender.png");
+	
+
+	private int myColor, yourColor;
+	private int boardc[][]; 
+	private final int enableColor = 2;
 
 	public WindowMultiGame(String inpIP, String usrType) {
 
 		// init data
-		bsize = 8;
 		IpAddress = inpIP;
 
 		// variables
@@ -46,6 +49,7 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null); // set window form to center screen
 		setResizable(false);
+		setTitle("Host");
 
 		// init button surrender
 		btnSurrender.setLocation(530, 496);
@@ -79,6 +83,8 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 		UserType(usrType);
 		add(btnSurrender);
 		add(imgMain);
+		boardc = new int[bsize][bsize];
+		initialize();
 	}
 	
 	public void UserType(String inp) {
@@ -100,8 +106,6 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 			btnWhite.setActionCommand("WHITE");
 			btnWhite.addActionListener(this);
 			add(btnWhite);
-
-			setTitle("Host");
 		}
 		else if (inp.equals("CLIENT")) {
 			// init button start
@@ -112,19 +116,32 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 			btnStart.setActionCommand("START");
 			btnStart.addActionListener(this);			
 			add(btnStart);
-
-			setTitle("Player");
 		}
 	}
 
-	public void startGame(Color color) {
+	
+	
+	private void initialize(){
+		Board.initialize(8);
+		Board.history.add(new Position(-1, -1)); //err... to avoid crash when fisrt go // history.size() cannot be 0
+		for(int i = 0; i < bsize; ++i)
+			for(int j = 0; j < bsize; ++j){
+				System.out.println(i+" "+j);
+				boardc[i][j] = Board.board[i][j];
+			}
+		UpdateBoardBackground();
+	}
+	
+	public void startGame(Color colorr) {
+		int color = colorr == Color.black ? Board.BLACK : Board.WHITE;
 		System.out.println("Starting Game...");
-		if (color == Color.black) {
+		if (color == Board.BLACK) {
 			System.out.println("Host - Black");
 			LAN.Read();
 			LAN.Write("WHITE", IpAddress);
 			SetBoardEnable(true);
-		} else if (color == Color.white) {
+			UpdateWhereCanGo();
+		} else if (color == Board.WHITE) {
 			System.out.println("Host - White");
 			LAN.Read();
 			LAN.Write("BLACK", IpAddress);
@@ -133,7 +150,7 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 				@Override
 				public void run() {
 					temp = LAN.Read();
-					UpdateGameBoard(temp);
+					UpdateGameBoard(temp, yourColor);
 				}
 			};
 			ReadData.start();
@@ -147,15 +164,16 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 		if (temp.equals("WHITE")) {
 			temp = LAN.Read();
 			SetBoardEnable(true);
-			myColor = Color.white;
-			yourColor = Color.black;
-			UpdateGameBoard(temp);
+			myColor = Board.WHITE;
+			yourColor = Board.BLACK;
+			UpdateGameBoard(temp, yourColor);
+			UpdateWhereCanGo();
 		}
 		if (temp.equals("BLACK")) {
 			SetBoardEnable(true);
-			myColor = Color.black;
-			yourColor = Color.white;
-			//UpdateGameBoard(temp);
+			myColor = Board.BLACK;
+			yourColor = Board.WHITE;
+			UpdateWhereCanGo();
 		}
 	}
 
@@ -164,26 +182,29 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 		if (command.equals("BLACK")) {
 			btnBlack.setVisible(false);
 			btnWhite.setVisible(false);
-			myColor = Color.black;
-			yourColor = Color.white;
-			startGame(myColor);
+			myColor = Board.BLACK;
+			yourColor = Board.WHITE;
+			startGame(parseColor(myColor));
 		} 
 		else if (command.equals("WHITE")) {
 			btnBlack.setVisible(false);
 			btnWhite.setVisible(false);
-			myColor = Color.white;
-			yourColor = Color.black;
-			startGame(myColor);
+			myColor = Board.WHITE;
+			yourColor = Board.BLACK;
+			startGame(parseColor(myColor));
 		} 
 		else if (command.substring(0, 5).equals("BOARD")) {
-			((JButton) e.getSource()).setBackground(myColor);
+			UpdateGameBoard(((JButton) e.getSource()).getActionCommand().substring(5), myColor);
+
 			LAN.Write(((JButton) e.getSource()).getActionCommand().substring(5), IpAddress);
 			//Read Set************************
 			Thread ReadData = new Thread() {
 				@Override
 				public void run() {
 					temp = LAN.Read();
-					UpdateGameBoard(temp);
+					UpdateGameBoard(temp, yourColor);
+					UpdateWhereCanGo();
+					
 				}
 			};
 			ReadData.start();
@@ -198,12 +219,34 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 		}
 	}
 
-	private void UpdateGameBoard(String inp) {
+	private void UpdateGameBoard(String inp, int color) {
 		System.out.println("SERVER UPDATE: " + inp);
 		int x = Integer.parseInt(inp.substring(1, 2));
 		int y = Integer.parseInt(inp.substring(2));
+		
+		ReversiRule.go(x, y, color);
+		Board.printBoard();
+		for(int i = 0; i < bsize; ++i)
+			for(int j = 0; j < bsize; ++j)
+				boardc[i][j] = Board.board[i][j];
+		
+		UpdateBoardBackground();
+	}
 
-		board[x][y].setBackground(yourColor);
+	private void UpdateBoardBackground(){
+		for(int i = 0; i < bsize; ++i)
+			for(int j = 0; j < bsize; ++j)
+				board[i][j].setBackground(parseColor(boardc[i][j]));
+	}
+	
+	private void UpdateWhereCanGo(){
+		for(int i = 0; i < bsize; ++i)
+			for(int j = 0; j < bsize; ++j)
+				boardc[i][j] = Board.board[i][j];
+		ReversiRule.canIgo(myColor);
+		for(Position pos : Board.possiblePos)
+			boardc[pos.getX()][pos.getY()] = enableColor;
+		UpdateBoardBackground();
 	}
 
 	private void SetBoardEnable(Boolean inp) {
@@ -213,4 +256,17 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 			}
 		}
 	}
+
+	Color parseColor(int color){
+		if(color == Board.BLACK)
+			return Color.black;
+		else if(color == Board.WHITE)
+			return Color.white;
+		else if(color == enableColor)
+			return Color.pink;
+		else
+			return Color.green;
+	}
+	
+	
 }
