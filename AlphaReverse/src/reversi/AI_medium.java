@@ -35,6 +35,8 @@ public class AI_medium extends AI_easy{
 //		}
 
 		for (Position move : possibleMove) {
+//			ReversiRule.printHistory();
+//			ReversiRule.printHistory(historyUntilNow);
 			
 			goToThis(historyUntilNow);
 			
@@ -45,6 +47,7 @@ public class AI_medium extends AI_easy{
 
 			int value = -negaMax(depth - 1, -color, new ArrayList<Position>(historyUntilNow));
 			historyUntilNow.set(historyUntilNow.size() - 1, new Position(-1, -1));
+			
 			
 //			System.out.println("value = "+value);
 			if (value > bestValue) {
