@@ -7,10 +7,30 @@ import java.awt.event.*;
 public class AIGame extends JFrame implements ActionListener
 {
 	private int bsize;
+	private int AI_level;
+	private int color;
+	private int noMove = 0;
+	static boolean pressed = false ;
+	private int turn;
+	private int count = 0;
+	private int x , y;
+	private String command;
+	
+	static Object lock = new Object();
+	
+	JButton undo = new JButton("UNDO");
+	JButton restart = new JButton("RESTART");
+	JButton black = new JButton("Black");
+	JButton white = new JButton("White");
+	JLabel status = new JLabel("Please pick a colour to start");
+	
+	JButton boardc[][] = new JButton[WindowSingle.lol][WindowSingle.lol];
+	JPanel gameboard = new JPanel();
 	
 	public AIGame(int size , int difficulty)
 	{
 		bsize = size;
+		AI_level = difficulty;
 		System.out.println("size is " + size + " diff is " + difficulty );
 		
 		setSize(800,600);
@@ -18,34 +38,31 @@ public class AIGame extends JFrame implements ActionListener
 		setLayout(null);
 		
 		//button included in this ui
-		//undo , restart , surrender , pause
-		JButton undo = new JButton("UNDO");
-		JButton restart = new JButton("RESTART");
-		JButton surrender = new JButton("SURRENDER");
+		//undo , restart , black , white , pause
+		
 		
 		undo.setSize(200, 80);
 		restart.setSize(200, 80);
-		surrender.setSize(200, 80);
+		black.setSize(200, 40);
+		white.setSize(200, 40);
+		status.setSize(500,40);
 		
 		undo.setLocation(0,0);
 		restart.setLocation(200,0);
-		surrender.setLocation(400,0);
+		black.setLocation(400,0);
+		white.setLocation(400,40);
+		status.setLocation(0, 81);
 		
 		add(undo);
 		add(restart);
-		add(surrender);		
-	}
-	
-	
-	
-	public void startGame()
-	{
-		//board button 
-		//using panel to fit the button inside
-		//the button has no size thus 
+		add(black);
+		add(white);
+		add(status);
 		
-		JButton board[][] = new JButton[bsize][bsize];
-		JPanel gameboard = new JPanel();
+		black.addActionListener(this);
+		white.addActionListener(this);
+		restart.addActionListener(this);
+		
 		gameboard.setLayout(new GridLayout(bsize,bsize));
 		int i = 0 , j = 0 ;
 		for( i = 0 ; i < bsize ; i++)
@@ -54,25 +71,224 @@ public class AIGame extends JFrame implements ActionListener
 			{
 				//for each button their command is B'i''j'
 				String buttonname = "B" + i + j;
-				//System.out.println(buttonname);
-				board[i][j] = new JButton(buttonname);
-				board[i][j].addActionListener(this);
-				//board[i][j].setSize(30, 30);
-				//board[i][j].setLocation( 200 + i*30, 200 + j*30);
-				gameboard.add(board[i][j]);
+
+				boardc[i][j] = new JButton(buttonname);
+				boardc[i][j].addActionListener(this);
+				boardc[i][j].setEnabled(false);
+				gameboard.add(boardc[i][j]);
 			}
 		}
 		
 		//panel will auto resize and relocate
 		gameboard.setSize(bsize*40, bsize*40);
-		gameboard.setLocation((800 - bsize*40)/2 , 100);
+		gameboard.setLocation((800 - bsize*40)/2 , 130);
 		add(gameboard);
+	}
+	
+	
+	public void startGame()
+	{
+		//board button 
+		//using panel to fit the button inside
+		//the button has no size thus 
+		noMove = 0;
+		Board.initialize(bsize);
+		if( color == -1 ) 
+		{
+			status.setText("You are black , you go first");
+		}
+		else
+		{
+			ReversiRule.canIgo(Board.BLACK);
+			AI.go(Board.BLACK, AI_level);
+			Board.printBoard();
+			status.setText("You are white , now is not your turn");
+		}
+		
+		for( int i = 0 ; i < bsize ; i++)
+		{
+			for( int j = 0 ; j < bsize ; j++ )
+			{
+				if( Board.board[i][j] == Board.BLACK ) boardc[i][j].setBackground( Color.BLACK);
+				else if(Board.board[i][j] == Board.WHITE ) boardc[i][j].setBackground( Color.WHITE);
+				else 
+				{
+					boardc[i][j].setBackground(null);
+					boardc[i][j].setEnabled(false);
+				}
+			}
+		}
+	}
+	
+	public class Thr extends Thread
+	{
+		public void run()
+		{
+			synchronized(lock)
+			{
+				pressed = false;
+			}
+			
+			while(true)
+			{
+				
+				if( noMove == 2)
+				{
+					status.setText("Game is over with white " + Board.whiteCount + " vs black " + Board.blackCount);
+					break;
+				}
+				
+				
+				
+				if( ReversiRule.canIgo( color ) == false)
+				{
+					noMove++;
+				}
+				else
+				{	
+					for(Position pos : Board.possiblePos)
+					{
+						boardc[pos.getX()][pos.getY()].setEnabled(true);
+						boardc[pos.getX()][pos.getY()].setBackground( Color.pink );
+					}
+					if( pressed == false )
+					{
+						while(true) 
+						{
+							count ++;
+							synchronized( lock )
+							{
+								if( pressed == true )
+								{
+									break;
+								}
+							}
+						}
+					}
+					x = Integer.parseInt(command.substring(1, 2));
+					y = Integer.parseInt(command.substring(2));
+					
+					System.out.println("hi " + x + " " + y);
+					
+					noMove = 0;
+					ReversiRule.goToThis();
+					ReversiRule.go(x, y, color );
+				}
+				
+				for( int i = 0 ; i < bsize ; i++)
+				{
+					for( int j = 0 ; j < bsize ; j++ )
+					{
+						if( Board.board[i][j] == -1 )
+						{
+							boardc[i][j].setEnabled(false);
+							boardc[i][j].setBackground( Color.BLACK);
+						} 
+						else if(Board.board[i][j] == 1 )
+						{
+							boardc[i][j].setEnabled(false);
+							boardc[i][j].setBackground( Color.WHITE);
+						}
+						else
+						{
+							boardc[i][j].setEnabled(false);
+							boardc[i][j].setBackground( null );
+						}
+						
+					}
+				}
+				status.setText("white " + Board.whiteCount + " vs black " + Board.blackCount);
+				
+
+				try
+				{
+					Thread. sleep(1000);
+				}
+				catch(InterruptedException ex)
+				{
+					ex.printStackTrace();
+				}
+				
+				Board.printBoard();
+				
+				if( noMove == 2)
+				{
+					status.setText("Game is over with white " + Board.whiteCount + " vs black " + Board.blackCount);
+					break;
+				}
+				
+				if( ReversiRule.canIgo(-color) == false)
+				{
+					noMove++;
+				}
+				else
+				{
+					noMove = 0;
+					AI.go(-color, AI_level);
+					Board.printBoard();
+				}
+					
+				for( int i = 0 ; i < bsize ; i++)
+				{
+					for( int j = 0 ; j < bsize ; j++ )
+					{
+						if( Board.board[i][j] == -1 )
+						{
+							boardc[i][j].setEnabled(false);
+							boardc[i][j].setBackground( Color.BLACK);
+						} 
+						else if(Board.board[i][j] == 1 )
+						{
+							boardc[i][j].setEnabled(false);
+							boardc[i][j].setBackground( Color.WHITE);
+						}
+					}
+				}
+				status.setText("white " + Board.whiteCount + " vs black " + Board.blackCount);
+				
+				synchronized(lock)
+				{
+					pressed = false;
+				}
+			}
+		}
 	}
 	
 	public void actionPerformed( ActionEvent e )
 	{
+		command = e.getActionCommand();
+		System.out.println("asd");
 		
-		System.out.println( e.getActionCommand() );
+		if( command.equals("RESTART") )
+		{
+			System.out.println("Game restarted");
+			startGame();
+		}
+		else if( command.equals("Black") ) 
+		{
+			System.out.println(command);
+			color = -1;
+			startGame();
+			Thr walau = new Thr();
+			walau.start();
+		}
+		else if( command.equals("White") )
+		{
+			System.out.println(command);
+			color = 1;
+			startGame();
+			Thr walau = new Thr();
+			walau.start();
+		}
+		/////////////////////////////////////////////////// chess action
+		else
+		{
+			synchronized(lock)
+            {
+                pressed = true;
+            }
+		}
+		////////////////////////////////////////// chess action
 	}
 	
 }
