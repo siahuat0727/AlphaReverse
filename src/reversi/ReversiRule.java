@@ -31,11 +31,9 @@ public class ReversiRule {
 		
 		boolean canMove = false;
 		if (Board.board[xPos][yPos] != 0){
-			System.out.println("Board x y is "+Board.board[xPos][yPos]);
 			return false;	
 		}
 		for (int dir = 0; dir < 8; dir++) {
-			System.out.println(dir);
 			x = xPos;
 			y = yPos;
 			int curCount = 0;
@@ -77,8 +75,6 @@ public class ReversiRule {
 		}
 
 		if (canMove) {
-
-			System.out.println("can move");
 			Board.board[xPos][yPos] = color;
 			if (color == Board.WHITE)
 				Board.whiteCount++;
