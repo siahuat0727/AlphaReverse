@@ -48,7 +48,6 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null); // set window form to center screen
 		setResizable(false);
-		setTitle("Host");
 
 		// init button surrender
 		btnSurrender.setLocation(530, 496);
@@ -105,6 +104,7 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 			btnWhite.setActionCommand("WHITE");
 			btnWhite.addActionListener(this);
 			add(btnWhite);
+			setTitle("Host");
 		} else if (inp.equals("CLIENT")) {
 			// init button start
 			btnStart.setLocation(10, 496);
@@ -114,6 +114,7 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 			btnStart.setActionCommand("START");
 			btnStart.addActionListener(this);
 			add(btnStart);
+			setTitle("Player");
 		}
 	}
 
