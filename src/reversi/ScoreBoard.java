@@ -12,18 +12,18 @@ import java.util.Scanner;
 
 public class ScoreBoard extends JFrame implements ActionListener {
 
-	public static void main(String args[]) {
-		Board.initialize();
-		new ScoreBoard(Board.BLACK);
-	}
+//	public static void main(String args[]) {
+//		Board.initialize();
+//		new ScoreBoard(Board.BLACK);
+//	}
 
-		JFrame frame = new JFrame();
 	public ScoreBoard(int color) {
 
+		JFrame frame = new JFrame();
 		JButton btnRestart = new JButton("");
 		JButton btnExit = new JButton("");
 		JLabel lblPlayer = new JLabel("Player");
-		JLabel lblAI = new JLabel("Opponent");
+		JLabel lblAI = new JLabel("AI");
 		
 		ImageIcon icon = new ImageIcon("Resources/MultiGame.png");
 
@@ -98,17 +98,15 @@ public class ScoreBoard extends JFrame implements ActionListener {
 		player_field.setLocation(61, 100);
 		player_field.setSize(player_field.getPreferredSize());
 		player_field.setText(player_result);
-		player_field.setForeground(Color.green);
-		player_field.setBackground(Color.black);
-		player_field.setFont(player_field.getFont().deriveFont(24.0f));
+//		player_field.setForeground(Color.green);
+//		player_field.setBackground(Color.black);
 
 		JTextArea ai_field = new JTextArea(20, 25);
 		ai_field.setLocation(464, 100);
 		ai_field.setSize(ai_field.getPreferredSize());
 		ai_field.setText(ai_result);
-		ai_field.setForeground(Color.green);
-		ai_field.setBackground(Color.black);
-		ai_field.setFont(ai_field.getFont().deriveFont(24.0f));
+//		ai_field.setForeground(Color.green);
+//		ai_field.setBackground(Color.black);
 
 		frame.setSize(805, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -134,13 +132,11 @@ public class ScoreBoard extends JFrame implements ActionListener {
 		lblPlayer.setSize(200, 40);
 		lblPlayer.setHorizontalTextPosition(0);
 		lblPlayer.setForeground(Color.green);
-		lblPlayer.setFont(lblPlayer.getFont().deriveFont(24.0f));
 
-		lblAI.setLocation(550, 50);
+		lblAI.setLocation(603, 50);
 		lblAI.setSize(200, 40);
 		lblAI.setHorizontalTextPosition(0);
 		lblAI.setForeground(Color.green);
-		lblAI.setFont(lblAI.getFont().deriveFont(24.0f));
 
 		// btnRefresh.addActionListener(this);
 		// btnExit.addActionListener(this);
@@ -163,7 +159,7 @@ public class ScoreBoard extends JFrame implements ActionListener {
 		String command = e.getActionCommand();
 
 		if (command.equals("Restart")) {
-			frame.setVisible(false);
+			setVisible(false);
 			//WindowMain frm = new WindowMain();
 			WindowMain.main(new String[1]);
 		}

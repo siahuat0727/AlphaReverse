@@ -14,6 +14,7 @@ public class AIGame extends JFrame implements ActionListener
 	private int turn;
 	private int count = 0;
 	private int x , y;
+	private int myColor;
 	private String command;
 	
 	static Object lock = new Object();
@@ -191,12 +192,8 @@ public class AIGame extends JFrame implements ActionListener
 					noMove++;
 				}
 				else
-				{	
-					for(Position pos : Board.possiblePos)
-					{
-						boardc[pos.getX()][pos.getY()].setEnabled(true);
-						boardc[pos.getX()][pos.getY()].setBackground( Color.pink );
-					}
+				{
+					UpdateWhereCanGo(myColor);
 					if( pressed == false )
 					{
 						while(true) 
@@ -213,7 +210,7 @@ public class AIGame extends JFrame implements ActionListener
 					}
 					x = Integer.parseInt(command.substring(1, 2));
 					y = Integer.parseInt(command.substring(2));
-					
+
 					System.out.println("hi " + x + " " + y);
 					
 					noMove = 0;
@@ -221,28 +218,7 @@ public class AIGame extends JFrame implements ActionListener
 					ReversiRule.go(x, y, color );
 				}
 				
-				for( int i = 0 ; i < bsize ; i++)
-				{
-					for( int j = 0 ; j < bsize ; j++ )
-					{
-						if( Board.board[i][j] == -1 )
-						{
-							boardc[i][j].setEnabled(false);
-							boardc[i][j].setBackground( Color.BLACK);
-						} 
-						else if(Board.board[i][j] == 1 )
-						{
-							boardc[i][j].setEnabled(false);
-							boardc[i][j].setBackground( Color.WHITE);
-						}
-						else
-						{
-							boardc[i][j].setEnabled(false);
-							boardc[i][j].setBackground(Color.green);
-						}
-						
-					}
-				}
+				UpdateGameBoard();
 				status.setText("white " + Board.whiteCount + " vs black " + Board.blackCount);
 				
 				restart.setEnabled(false);
@@ -302,6 +278,40 @@ public class AIGame extends JFrame implements ActionListener
 		}
 	}
 	
+	private void UpdateGameBoard(){
+		for( int i = 0 ; i < bsize ; i++)
+		{
+			for( int j = 0 ; j < bsize ; j++ )
+			{
+				if( Board.board[i][j] == -1 )
+				{
+					boardc[i][j].setEnabled(false);
+					boardc[i][j].setBackground( Color.BLACK);
+				} 
+				else if(Board.board[i][j] == 1 )
+				{
+					boardc[i][j].setEnabled(false);
+					boardc[i][j].setBackground( Color.WHITE);
+				}
+				else
+				{
+					boardc[i][j].setEnabled(false);
+					boardc[i][j].setBackground(Color.green);
+				}
+				
+			}
+		}
+	}
+	
+	private void UpdateWhereCanGo(int color){
+		ReversiRule.checkWhereCanMove(color);
+		for(Position pos : Board.possiblePos)
+		{
+			boardc[pos.getX()][pos.getY()].setEnabled(true);
+			boardc[pos.getX()][pos.getY()].setBackground( Color.pink );
+		}
+	}
+	
 	public void actionPerformed( ActionEvent e )
 	{
 		command = e.getActionCommand();
@@ -313,8 +323,15 @@ public class AIGame extends JFrame implements ActionListener
 			color = 0;
 			startGame();
 		}
-		else if( command.equals("Black") ) 
+		else if( command.equals("UNDO") ) 
 		{
+			ReversiRule.undo();
+			UpdateGameBoard();
+			UpdateWhereCanGo(myColor);
+			
+		}else if( command.equals("Black") ) 
+		{
+			myColor = Board.BLACK;
 			black.setVisible(false);
 			white.setVisible(false);
 			System.out.println(command);
@@ -325,6 +342,7 @@ public class AIGame extends JFrame implements ActionListener
 		}
 		else if( command.equals("White") )
 		{
+			myColor = Board.WHITE;
 			white.setVisible(false);
 			black.setVisible(false);
 			System.out.println(command);

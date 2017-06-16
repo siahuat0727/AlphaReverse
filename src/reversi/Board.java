@@ -2,26 +2,24 @@ package reversi;
 
 import java.util.ArrayList;
 
-// Board 憡����蕩憿抬蜀���蕭 initialize 
+// Board 一定要被 initialize 
 
 public class Board {
 
 	public static final int WHITE = 1;
 	public static final int BLACK = -1;
 	
-	// �����嚙賣���蕭
+	// 计算子数
 	public static int blackCount, whiteCount;
 	
-	// 瞈∵��迆敹��嚙�
+	// 棋盘大小
 	public static int SIZE; 
 	
-	// 瞈∵��迆敹����瘨單 0��������蕭 1�������蕭 -1����赫嚙�
+	// 棋盘状况， 0表空， 1表白， -1表黑
 	public static int[][] board;
 	
-	// ����儒�蝔���璉���什�������憳桅����蕭 ����釆��������憡蝎�站蝷甈����遙嚙�.size �甈�辣嚙� ���盔��蕭
+	// 目前下棋方可以下的点， 用来作画面暗示，可透过.size 取得 总数
 	public static ArrayList<Position> possiblePos;
-	
-	public static int nTurn;
 	
 	public static ArrayList<Position> history;
 
@@ -29,19 +27,14 @@ public class Board {
 		initialize(8);
 	}
 
-	// 憍Ｗ�瘥甈�嚙�
+	// 大小可调
 	public static void initialize(int size) {
 		if(size <= 4)
 			SIZE = 4;
 		else
-			SIZE = size + (size & 1); // �戭剖��蝔�撠�
+			SIZE = size + (size & 1); // 偶数为佳
 		
-		board = new int[SIZE][SIZE];
-		board[SIZE / 2 - 1][SIZE / 2 - 1] = board[SIZE / 2][SIZE / 2] = WHITE; // |��憪���
-		board[SIZE / 2 - 1][SIZE / 2] = board[SIZE / 2][SIZE / 2 - 1] = BLACK; // |憪���
-		nTurn = 0;
-		blackCount = 2;
-		whiteCount = 2;
+		startAgain();
 		possiblePos = new ArrayList<Position>();
 		history = new ArrayList<Position>();
 		ReversiRule.updateWeight();
@@ -49,14 +42,14 @@ public class Board {
 	}
 	
 	public static void startAgain(){
+		board = new int[SIZE][SIZE];
+		board[SIZE / 2 - 1][SIZE / 2 - 1] = board[SIZE / 2][SIZE / 2] = WHITE; // |white|black|
+		board[SIZE / 2 - 1][SIZE / 2] = board[SIZE / 2][SIZE / 2 - 1] = BLACK; // |black|white|
 		blackCount = 2;
 		whiteCount = 2;
-		board = new int[SIZE][SIZE];
-		board[SIZE / 2 - 1][SIZE / 2 - 1] = board[SIZE / 2][SIZE / 2] = WHITE; // |��憪���
-		board[SIZE / 2 - 1][SIZE / 2] = board[SIZE / 2][SIZE / 2 - 1] = BLACK; // |憪���
 	}
 
-	// debug ���
+	// for debug 
 	public static void printBoard() {
 		for (int i = -2; i < SIZE; ++i) {
 			if (i == -2) {
@@ -72,9 +65,9 @@ public class Board {
 				for (int j = 0; j < SIZE; ++j) {
 					System.out.print("  ");
 					if (board[i][j] == WHITE)
-						System.out.print("0");
+						System.out.print("o");
 					else if (board[i][j] == BLACK)
-						System.out.print("X");
+						System.out.print("x");
 					else
 						System.out.print(" ");
 				}
