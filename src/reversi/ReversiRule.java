@@ -11,7 +11,7 @@ public class ReversiRule {
 	private static int[][] mobility;
 
 //	A little bit hard to write =.=
-//	private static ArrayList<Position> predictPossiblePos = new ArrayList<Position>(); // to be used in alphabeta with history table 
+//	private static ArrayList<Position> predictPossiblePos = new ArrayList<Position>(); // to be used in alpha-beta with history table 
 
 	protected static boolean go(int xPos, int yPos, int color) {
 		return go(xPos, yPos, color, false);
@@ -66,7 +66,6 @@ public class ReversiRule {
 					Board.whiteCount -= curCount;
 				}
 				while (curCount > 0) {
-					System.out.println("> 0");
 					x = posToReverse[curCount][0];
 					y = posToReverse[curCount][1];
 					Board.board[x][y] *= -1;
@@ -94,7 +93,7 @@ public class ReversiRule {
 	protected static boolean canIgo(int color, ArrayList<Position> history) {
 		history.add(new Position(-1, -1));
 		checkWhereCanMove(color);
-		return !Board.possiblePos.isEmpty();
+		return IcanGo(color);
 	}
 
 	protected static boolean IcanGo(int color) {
@@ -157,8 +156,8 @@ public class ReversiRule {
 		updateWeight(0);
 	}
 
-	// n == 0 when start, it is not important compare the mobility
-	// n == 1 when about to finished ( find the step to get the most count )
+	// n == 0 when start( it is not that important compare to mobility )
+	// n == 1 when about to finished ( find the step to get the most chess pieces )
 	protected static void updateWeight(int n) {
 		final int cornerValue = 100;
 		if (n == 0) {
@@ -216,8 +215,8 @@ public class ReversiRule {
 		setMobility(0);
 	}
 
-	// this is very important when game is starting(n == 0)
-	// no use when about to finished(n == 1)
+	// this is very important when game is just start(n == 0)
+	// no use when about to finish(n == 1)
 	protected static void setMobility(int n) {
 		final int cornerValue = 5;
 		if (n == 0) {
@@ -322,6 +321,15 @@ public class ReversiRule {
 
 	protected static int getTotalStep() {
 		return Board.SIZE * Board.SIZE;
+	}
+	
+	// support only in human v.s. AI mode
+	protected static void undo() {
+		if (Board.history.size() >= 3) {
+			Board.history.remove(Board.history.size() - 2);
+			Board.history.remove(Board.history.size() - 2);
+			goToThis();
+		}
 	}
 
 }
