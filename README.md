@@ -53,7 +53,7 @@
     ### 額外發想
     - 後來嘗試用AI_medium對戰AI_hard，發現AI_medium竟然領先，於是想說終局部分應該不可以再調用**估值函數**，而是直接以**子數**為準，往下搜到結束部分（一定要搜到結束是因為覺得少了估值，最後一步其實很有機會扭轉乾坤）
     - 所以AI_medium和AI_hard都根據各自的能力在快結束時使用直接暴力搜到結束的方式，於是AI_hard就沒再輸過AI_medium了
-    - 深度 ：medium 8 步， hard 10 步（最長5秒左右得出結果）
+    - 深度 ：medium 8 步， hard 10 步（最長5秒左右得出結果）
 
 - ## Server and Client
 	### void LAN.Write(String inp, String ServerIP) (發送訊息到Server端)
