@@ -151,7 +151,6 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 				public void run() {
 					temp = LAN.Read();
 					UpdateGameBoard(temp, yourColor);
-					UpdateWhereCanGo();
 				}
 			};
 			ReadData.start();
@@ -179,7 +178,6 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 	}
 
 	private void GameOver(){
-		new ScoreBoard(myColor);
 		System.out.println("game over!!");
 	}
 	

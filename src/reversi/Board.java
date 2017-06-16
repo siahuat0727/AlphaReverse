@@ -2,46 +2,48 @@ package reversi;
 
 import java.util.ArrayList;
 
-// Board 一定要被 initialize 
+// Board must be initialize before use!!!!!!! 
 
 public class Board {
 
 	public static final int WHITE = 1;
 	public static final int BLACK = -1;
-	
-	// 计算子数
+
+	// count the # of black and white
 	public static int blackCount, whiteCount;
-	
-	// 棋盘大小
-	public static int SIZE; 
-	
-	// 棋盘状况， 0表空， 1表白， -1表黑
+
+	// SIZE can be changed (only human v.s. AI support this)
+	public static int SIZE;
+
+	// board 0 for empty
 	public static int[][] board;
-	
-	// 目前下棋方可以下的点， 用来作画面暗示，可透过.size 取得 总数
+
+	// the possible position to move next after calling ReversiRule.canIgo
 	public static ArrayList<Position> possiblePos;
-	
+
+	// the history of every step
 	public static ArrayList<Position> history;
 
 	public static void initialize() {
 		initialize(8);
 	}
 
-	// 大小可调
+	// initial
 	public static void initialize(int size) {
-		if(size <= 4)
+		if (size <= 4)
 			SIZE = 4;
 		else
-			SIZE = size + (size & 1); // 偶数为佳
-		
+			SIZE = size + (size & 1); // cast to even number(so that it is
+										// symmetric)
+
 		startAgain();
 		possiblePos = new ArrayList<Position>();
 		history = new ArrayList<Position>();
 		ReversiRule.updateWeight();
 		ReversiRule.setMobility();
 	}
-	
-	public static void startAgain(){
+
+	public static void startAgain() {
 		board = new int[SIZE][SIZE];
 		board[SIZE / 2 - 1][SIZE / 2 - 1] = board[SIZE / 2][SIZE / 2] = WHITE; // |white|black|
 		board[SIZE / 2 - 1][SIZE / 2] = board[SIZE / 2][SIZE / 2 - 1] = BLACK; // |black|white|
@@ -49,7 +51,7 @@ public class Board {
 		whiteCount = 2;
 	}
 
-	// for debug 
+	// for debug
 	public static void printBoard() {
 		for (int i = -2; i < SIZE; ++i) {
 			if (i == -2) {

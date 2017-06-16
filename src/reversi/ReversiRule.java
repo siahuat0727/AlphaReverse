@@ -10,9 +10,10 @@ public class ReversiRule {
 
 	private static int[][] mobility;
 
-	private static ArrayList<Position> predictPossiblePos = new ArrayList<Position>();
+//	A little bit hard to write =.=
+//	private static ArrayList<Position> predictPossiblePos = new ArrayList<Position>(); // to be used in alphabeta with history table 
 
-	public static boolean go(int xPos, int yPos, int color) {
+	protected static boolean go(int xPos, int yPos, int color) {
 		return go(xPos, yPos, color, false);
 	}
 
@@ -20,6 +21,7 @@ public class ReversiRule {
 		return go(xPos, yPos, color, checkOnly, Board.history);
 	}
 
+	// save the result after go in Board.board[][]
 	protected static boolean go(int xPos, int yPos, int color, boolean checkOnly, ArrayList<Position> history) {
 		if (xPos < 0)
 			return false;
@@ -64,6 +66,7 @@ public class ReversiRule {
 					Board.whiteCount -= curCount;
 				}
 				while (curCount > 0) {
+					System.out.println("> 0");
 					x = posToReverse[curCount][0];
 					y = posToReverse[curCount][1];
 					Board.board[x][y] *= -1;
@@ -83,41 +86,36 @@ public class ReversiRule {
 			return false;
 	}
 
-	public static boolean canIgo(int color) {
-		System.out.println(getName(color));
-		printHistory();
+	protected static boolean canIgo(int color) {
 		return canIgo(color, Board.history);
+	}
+
+	// check whether I can go and save the result in Board.possiblePos
+	protected static boolean canIgo(int color, ArrayList<Position> history) {
+		history.add(new Position(-1, -1));
+		checkWhereCanMove(color);
+		return !Board.possiblePos.isEmpty();
 	}
 
 	protected static boolean IcanGo(int color) {
 		return !Board.possiblePos.isEmpty();
 	}
 
-	protected static boolean canIgo(int color, ArrayList<Position> history) {
-
-		history.add(new Position(-1, -1));
-
-		checkWhereCanMove(color);
-		return !Board.possiblePos.isEmpty();
-	}
-
 	// save the results in Board.possiblePos
 	protected static ArrayList<Position> checkWhereCanMove(int color) {
-
 		if (Board.possiblePos.isEmpty() == false)
 			Board.possiblePos.clear();
 
 		for (int x = 0; x < Board.SIZE; x++)
-			for (int y = 0; y < Board.SIZE; y++) {
+			for (int y = 0; y < Board.SIZE; y++)
 				if (go(x, y, color, true))
 					Board.possiblePos.add(new Position(x, y));
-			}
 
 		return Board.possiblePos;
 	}
 
 	// for debug
-	public static void printWhereCanMove() {
+	protected static void printWhereCanMove() {
 		for (Position pos : Board.possiblePos)
 			pos.print();
 		System.out.println("");
@@ -140,6 +138,7 @@ public class ReversiRule {
 		goToThis(Board.history);
 	}
 
+	// run the board from start to now(depends on history)
 	protected static void goToThis(ArrayList<Position> history) {
 		Board.startAgain();
 		int historyColor = Board.BLACK;
@@ -158,6 +157,8 @@ public class ReversiRule {
 		updateWeight(0);
 	}
 
+	// n == 0 when start, it is not important compare the mobility
+	// n == 1 when about to finished ( find the step to get the most count )
 	protected static void updateWeight(int n) {
 		final int cornerValue = 100;
 		if (n == 0) {
@@ -166,7 +167,7 @@ public class ReversiRule {
 
 			weight = new int[Board.SIZE][Board.SIZE];
 
-			// edge(some position will be assigned again)
+			// edge(the other position will be assigned again)
 			for (int i = 0; i < Board.SIZE; ++i) {
 				for (int j = 0; j < Board.SIZE; ++j) {
 					weight[i][j] = 5;
@@ -194,6 +195,8 @@ public class ReversiRule {
 					- 2] = weight[Board.SIZE - 2][1] = weight[Board.SIZE - 2][Board.SIZE - 2] = -50;
 
 		} else {
+			if (weight != null && weight[0][0] == 1)
+				return;
 			for (int i = 0; i < Board.SIZE; ++i) {
 				for (int j = 0; j < Board.SIZE; ++j) {
 					weight[i][j] = 1;
@@ -201,9 +204,9 @@ public class ReversiRule {
 			}
 		}
 
-		// for(int i = 0; i < 8; ++i){
-		// for(int j = 0; j < 8; ++j){
-		// System.out.print(weight[i][j]+ " ");
+		// for (int i = 0; i < Board.SIZE; ++i) {
+		// for (int j = 0; j < Board.SIZE; ++j) {
+		// System.out.print(weight[i][j] + " ");
 		// }
 		// System.out.println("");
 		// }
@@ -213,6 +216,8 @@ public class ReversiRule {
 		setMobility(0);
 	}
 
+	// this is very important when game is starting(n == 0)
+	// no use when about to finished(n == 1)
 	protected static void setMobility(int n) {
 		final int cornerValue = 5;
 		if (n == 0) {
@@ -221,7 +226,7 @@ public class ReversiRule {
 
 			mobility = new int[Board.SIZE][Board.SIZE];
 
-			// edge(some position will be assigned again)
+			// edge(the other position will be assigned again)
 			for (int i = 0; i < Board.SIZE; ++i) {
 				for (int j = 0; j < Board.SIZE; ++j) {
 					mobility[i][j] = 3;
@@ -249,6 +254,8 @@ public class ReversiRule {
 					- 2] = mobility[Board.SIZE - 2][1] = mobility[Board.SIZE - 2][Board.SIZE - 2] = 1;
 
 		} else {
+			if (mobility != null && mobility[0][0] == 0)
+				return;
 			for (int i = 0; i < Board.SIZE; ++i) {
 				for (int j = 0; j < Board.SIZE; ++j) {
 					mobility[i][j] = 0;
@@ -280,7 +287,7 @@ public class ReversiRule {
 		}
 
 		// System.out.print(" mobility = "+ans);
-		return 3 * ans;
+		return 3 * ans; // can adjust the weight of mobility in evaluateValue
 	}
 
 	protected static int getEvaluateValue(int color) {
@@ -299,11 +306,11 @@ public class ReversiRule {
 			return "black";
 	}
 
-	public static void printHistory() {
+	protected static void printHistory() {
 		printHistory(Board.history);
 	}
 
-	public static void printHistory(ArrayList<Position> history) {
+	protected static void printHistory(ArrayList<Position> history) {
 		for (Position pos : history)
 			System.out.print(pos + " ");
 		System.out.println("");
@@ -315,14 +322,6 @@ public class ReversiRule {
 
 	protected static int getTotalStep() {
 		return Board.SIZE * Board.SIZE;
-	}
-
-	protected static void undo() {
-		if (Board.history.size() >= 3) {
-			Board.history.remove(Board.history.size() - 2);
-			Board.history.remove(Board.history.size() - 2);
-			goToThis();
-		}
 	}
 
 }

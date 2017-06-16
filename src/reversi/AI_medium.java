@@ -7,11 +7,14 @@ public class AI_medium extends AI_easy{
 	public static void go(int color){
 		Position goodPos;
 		
+		// when it is about to finish, don't consider weight and mobility but max count 
 		if(getTotalStep() - getStep() <= 8 ){
 			updateWeight(1);
+			setMobility(1);
 			goodPos= minMax(8, color);
 		}else{
 			updateWeight(0);
+			setMobility(0);
 			goodPos= minMax(4, color);
 		}
 		
@@ -20,6 +23,7 @@ public class AI_medium extends AI_easy{
 		go(goodPos.getX(), goodPos.getY(), color);
 	}
 	
+	// find the best step after trying all depth of steps
 	public static Position minMax(int depth, int color) {
 		int bestValue = -1000;
 		Position bestMove = new Position(0, 0);
@@ -56,6 +60,7 @@ public class AI_medium extends AI_easy{
 		return bestMove;
 	}
 
+	// A better way to design the method instead of writing two method Min and Max that are almost the same
 	public static int negaMax(int depth, int color, ArrayList<Position> historyUntilNow) {
 		int bestValue = -1000;
 

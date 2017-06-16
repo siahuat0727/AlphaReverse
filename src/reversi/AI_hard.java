@@ -8,6 +8,7 @@ public class AI_hard extends AI_medium {
 
 		Position goodPos;
 		
+		// when it is about to finish, don't consider weight and mobility but max count
 		if(getTotalStep() - getStep() <= 10){
 			updateWeight(1);
 			goodPos= minMax(10, color);
@@ -21,6 +22,7 @@ public class AI_hard extends AI_medium {
 		go(goodPos.getX(), goodPos.getY(), color);
 	}
 
+	// find the best step after trying all depth of some steps
 	public static Position minMax(int depth, int color) {
 
 		int bestValue = -1000;
@@ -58,6 +60,7 @@ public class AI_hard extends AI_medium {
 		return bestMove;
 	}
 
+	// add two variable alpha and beta to avoid keeping search for step that will not be a good step
 	public static int alphaBeta(int depth, int color, ArrayList<Position> historyUntilNow, int alpha, int beta) {
 		int bestValue = -1000;
 

@@ -21,6 +21,8 @@ public class AI_easy extends ReversiRule {
 			int value = getEvaluateValue(color);
 
 //			System.out.println("for " + pos.getX() + "," + pos.getY() + " value = " + value);
+			
+			// check there are some positions that are enough good 
 			if (value > max + 5) {
 				goodPos.clear();
 				goodPos.add(pos);
@@ -32,6 +34,7 @@ public class AI_easy extends ReversiRule {
 
 		goToThis();
 
+		//randomly select one of good position
 		Random rand = new Random();
 		int choice = rand.nextInt(goodPos.size());
 		int resultX = goodPos.get(choice).getX();
