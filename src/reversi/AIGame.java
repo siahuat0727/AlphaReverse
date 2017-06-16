@@ -11,9 +11,9 @@ public class AIGame extends JFrame implements ActionListener
 	private int color;
 	private int noMove = 0;
 	static boolean pressed = false ;
-	static boolean restarted = false ;
+	private int turn;
+	private int count = 0;
 	private int x , y;
-	private int myColor;
 	private String command;
 	
 	static Object lock = new Object();
@@ -183,6 +183,8 @@ public class AIGame extends JFrame implements ActionListener
 				if( noMove == 2)
 				{
 					status.setText("Game is over with white " + Board.whiteCount + " vs black " + Board.blackCount);
+					new ScoreBoard(color);
+					
 					break;
 				}
 				
@@ -192,12 +194,12 @@ public class AIGame extends JFrame implements ActionListener
 				}
 				else
 				{
-					UpdateWhereCanGo(myColor);
+					UpdateWhereCanGo(color);
 					if( pressed == false )
 					{
 						while(true) 
 						{
-							//count ++;
+							count ++;
 							synchronized( lock )
 							{
 								if( pressed == true )
@@ -216,14 +218,9 @@ public class AIGame extends JFrame implements ActionListener
 					ReversiRule.goToThis();
 					ReversiRule.go(x, y, color );
 				}
-				
+
 				UpdateGameBoard();
 				status.setText("white " + Board.whiteCount + " vs black " + Board.blackCount);
-				
-				//if(restarted == true )
-				//{
-				//	return;
-				//}
 				
 				restart.setEnabled(false);
 				undo.setEnabled(false);
@@ -242,9 +239,10 @@ public class AIGame extends JFrame implements ActionListener
 				if( noMove == 2)
 				{
 					status.setText("Game is over with white " + Board.whiteCount + " vs black " + Board.blackCount);
+					new ScoreBoard(color);
 					break;
 				}
-				
+
 				if( ReversiRule.canIgo(-color) == false)
 				{
 					noMove++;
@@ -279,16 +277,7 @@ public class AIGame extends JFrame implements ActionListener
 					pressed = false;
 				}
 			}
-			
-			//stopThr();
-			//return;
 		}
-		
-		//public void stopThr()
-		//{
-		//	return;
-		//}
-		
 	}
 	
 	private void UpdateGameBoard(){
@@ -324,8 +313,7 @@ public class AIGame extends JFrame implements ActionListener
 			boardc[pos.getX()][pos.getY()].setBackground( Color.pink );
 		}
 	}
-	Thr walau;
-	@SuppressWarnings("deprecation")
+	
 	public void actionPerformed( ActionEvent e )
 	{
 		command = e.getActionCommand();
@@ -335,51 +323,33 @@ public class AIGame extends JFrame implements ActionListener
 		{
 			System.out.println("Game restarted");
 			color = 0;
-			synchronized(lock)
-            {
-                restarted = true;
-            }
 			startGame();
 		}
 		else if( command.equals("UNDO") ) 
 		{
 			ReversiRule.undo();
 			UpdateGameBoard();
-			UpdateWhereCanGo(myColor);
+			UpdateWhereCanGo(color);
 			
 		}else if( command.equals("Black") ) 
 		{
-			myColor = Board.BLACK;
 			black.setVisible(false);
 			white.setVisible(false);
 			System.out.println(command);
-			color = -1;
+			color = Board.BLACK;
 			startGame();
-			if(walau!=null){
-				walau.stop();
-				walau = new Thr();
-				walau.start();
-			}else{
-				walau = new Thr();
-				walau.start();
-			}
+			Thr walau = new Thr();
+			walau.start();
 		}
 		else if( command.equals("White") )
 		{
-			myColor = Board.WHITE;
 			white.setVisible(false);
 			black.setVisible(false);
 			System.out.println(command);
-			color = 1;
+			color = Board.WHITE;
 			startGame();
-			if(walau!=null){
-				walau.stop();
-				walau = new Thr();
-				walau.start();
-			}else{
-				walau = new Thr();
-				walau.start();
-			}
+			Thr walau = new Thr();
+			walau.start();
 		}
 		/////////////////////////////////////////////////// chess action
 		else
