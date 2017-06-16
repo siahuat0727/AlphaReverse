@@ -11,8 +11,7 @@ public class AIGame extends JFrame implements ActionListener
 	private int color;
 	private int noMove = 0;
 	static boolean pressed = false ;
-	private int turn;
-	private int count = 0;
+	static boolean restarted = false ;
 	private int x , y;
 	private int myColor;
 	private String command;
@@ -198,7 +197,7 @@ public class AIGame extends JFrame implements ActionListener
 					{
 						while(true) 
 						{
-							count ++;
+							//count ++;
 							synchronized( lock )
 							{
 								if( pressed == true )
@@ -220,6 +219,11 @@ public class AIGame extends JFrame implements ActionListener
 				
 				UpdateGameBoard();
 				status.setText("white " + Board.whiteCount + " vs black " + Board.blackCount);
+				
+				//if(restarted == true )
+				//{
+				//	return;
+				//}
 				
 				restart.setEnabled(false);
 				undo.setEnabled(false);
@@ -275,7 +279,16 @@ public class AIGame extends JFrame implements ActionListener
 					pressed = false;
 				}
 			}
+			
+			//stopThr();
+			//return;
 		}
+		
+		//public void stopThr()
+		//{
+		//	return;
+		//}
+		
 	}
 	
 	private void UpdateGameBoard(){
@@ -311,7 +324,8 @@ public class AIGame extends JFrame implements ActionListener
 			boardc[pos.getX()][pos.getY()].setBackground( Color.pink );
 		}
 	}
-	
+	Thr walau;
+	@SuppressWarnings("deprecation")
 	public void actionPerformed( ActionEvent e )
 	{
 		command = e.getActionCommand();
@@ -321,6 +335,10 @@ public class AIGame extends JFrame implements ActionListener
 		{
 			System.out.println("Game restarted");
 			color = 0;
+			synchronized(lock)
+            {
+                restarted = true;
+            }
 			startGame();
 		}
 		else if( command.equals("UNDO") ) 
@@ -337,8 +355,14 @@ public class AIGame extends JFrame implements ActionListener
 			System.out.println(command);
 			color = -1;
 			startGame();
-			Thr walau = new Thr();
-			walau.start();
+			if(walau!=null){
+				walau.stop();
+				walau = new Thr();
+				walau.start();
+			}else{
+				walau = new Thr();
+				walau.start();
+			}
 		}
 		else if( command.equals("White") )
 		{
@@ -348,8 +372,14 @@ public class AIGame extends JFrame implements ActionListener
 			System.out.println(command);
 			color = 1;
 			startGame();
-			Thr walau = new Thr();
-			walau.start();
+			if(walau!=null){
+				walau.stop();
+				walau = new Thr();
+				walau.start();
+			}else{
+				walau = new Thr();
+				walau.start();
+			}
 		}
 		/////////////////////////////////////////////////// chess action
 		else
