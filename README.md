@@ -66,4 +66,11 @@
 	- 在Host先選擇黑棋/白棋，然後呼叫**LAN.Read()**等待Player連線。
 	- 開啟Player，然後選擇開始遊戲。當按下開始遊戲，Player會發送"CONNECT"訊息到Host。
 	- 如果Host/Player是**黑棋**，那就開始遊戲，等玩家"下棋"時會發送所下的棋子的坐標。
-	- 如果Host/Player是**白棋**，那就會執行LAN.Read()，等待Player下棋~~發送訊息~~。
+	- 如果Host/Player是**白棋**，那就會執行LAN.Read()，等待Player下棋(~~發送訊息~~)。
+
+	### 在遊戲期間，如何進行通訊
+	- 當按下按鈕(下棋)時，程式會先Update棋盤上的資訊，然後透過LAN.Write發送下的棋子的**坐標**，然後等待對手回復。
+
+	### 如何在LAN.Read()的時候swing界面不會卡頓~~無法動作~~
+	- 把LAN.Read()放到一個Thread裡面，然後只呼叫Thread來等待對手回復。
+	
