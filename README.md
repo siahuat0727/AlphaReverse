@@ -15,7 +15,7 @@
 - 將來支援隨機選一子反轉(?)
 
 # 工作分配
-	### 人工智慧 - 陳聲發
+- 人工智慧 - 陳聲發
 - 棋盤規則 - 陳聲發
 - 單人模式 - 謝永家
 - 對戰模式 - 王皓玄、陳聲發
@@ -57,7 +57,13 @@
 
 - ## Server and Client
 	### void LAN.Write(String inp, String ServerIP) (發送訊息到Server端)
-	- 先設定好Socket，然後透過DataOutputStream的**writeUTF**的方式把訊息傳送到Server端.
+	- 先設定好Socket，然後透過DataOutputStream的**writeUTF**的方式把訊息傳送到Server端。
 
 	### String LAN.Read() (從Client端接受訊息)
 	- 先設定好Socket，然後透過DataInputStream的**readUTH**的方式把訊息接受到String裡面。
+
+	### 如何在開始遊戲時候鏈接對手
+	- 在Host先選擇黑棋/白棋，然後呼叫**LAN.Read()**等待Player連線。
+	- 開啟Player，然後選擇開始遊戲。當按下開始遊戲，Player會發送"CONNECT"訊息到Host。
+	- 如果Host/Player是**黑棋**，那就開始遊戲，等玩家"下棋"時會發送所下的棋子的坐標。
+	- 如果Host/Player是**白棋**，那就會執行LAN.Read()，等待Player下棋~~發送訊息~~。
