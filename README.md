@@ -15,7 +15,7 @@
 - 將來支援隨機選一子反轉(?)
 
 # 工作分配
-- 人工智慧 - 陳聲發
+	### 人工智慧 - 陳聲發
 - 棋盤規則 - 陳聲發
 - 單人模式 - 謝永家
 - 對戰模式 - 王皓玄、陳聲發
@@ -59,5 +59,5 @@
 	### void LAN.Write(String inp, String ServerIP) (發送訊息到Server端)
 	- 先設定好Socket，然後透過DataOutputStream的**writeUTF**的方式把訊息傳送到Server端.
 
-	### String LAN.Read (從Client端接受訊息)
+	### String LAN.Read() (從Client端接受訊息)
 	- 先設定好Socket，然後透過DataInputStream的**readUTH**的方式把訊息接受到String裡面。
