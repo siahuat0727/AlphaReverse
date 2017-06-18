@@ -16,7 +16,7 @@ public class Test {
 		int AI_level_black = 2;
 		int AI_level_white = 3;
 
-		int noMove = 0; // 连续两次 noMove 是游戏结束的唯一依据
+		int noMove = 0;
 
 		int AIcolor = Board.WHITE; // can be changed
 
@@ -45,7 +45,7 @@ public class Test {
 					dy = scanner.nextInt();
 					ReversiRule.go(dx, dy, curColor);
 				} else
-					AI.go(curColor, curColor == Board.BLACK ? 2 : 2);
+					AI.go(curColor, curColor == Board.BLACK ? AI_level_black : AI_level_white);
 
 				System.out.print(ReversiRule.getName(curColor) + " move at ");
 				System.out.println(Board.history.get(Board.history.size() - 1));

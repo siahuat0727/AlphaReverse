@@ -126,7 +126,6 @@ public class WindowMultiGame extends JFrame implements ActionListener {
 													// 0
 		for (int i = 0; i < bsize; ++i)
 			for (int j = 0; j < bsize; ++j) {
-				System.out.println(i + " " + j);
 				boardc[i][j] = Board.board[i][j];
 			}
 		UpdateBoardBackground();
