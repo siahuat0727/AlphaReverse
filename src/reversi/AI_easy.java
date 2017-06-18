@@ -14,7 +14,7 @@ public class AI_easy extends ReversiRule {
 		ArrayList<Position> goodPos = new ArrayList<Position>();
 
 		for (Position pos : curPossiblePos) {
-			goToThis();
+			goToNow();
 
 			go(pos.getX(), pos.getY(), color, false, new ArrayList<Position>(Board.history)); // pass a dummy arrayList =.=
 
@@ -32,7 +32,7 @@ public class AI_easy extends ReversiRule {
 			}
 		}
 
-		goToThis();
+		goToNow();
 
 		//randomly select one of good position
 		Random rand = new Random();

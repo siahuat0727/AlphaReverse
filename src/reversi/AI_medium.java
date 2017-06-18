@@ -19,7 +19,7 @@ public class AI_medium extends AI_easy {
 			goodPos = minMax(4, color);
 		}
 
-		goToThis();
+		goToNow();
 
 		go(goodPos.getX(), goodPos.getY(), color);
 	}
@@ -41,7 +41,7 @@ public class AI_medium extends AI_easy {
 
 		for (Position move : possibleMove) {
 
-			goToThis(historyUntilNow);
+			goToNow(historyUntilNow);
 
 			go(move.getX(), move.getY(), color, false, historyUntilNow);
 
@@ -85,7 +85,7 @@ public class AI_medium extends AI_easy {
 			// str += pos;
 			// System.out.println(str);
 
-			goToThis(historyUntilNow);
+			goToNow(historyUntilNow);
 
 			go(move.getX(), move.getY(), color, false, historyUntilNow);
 			// str = "after go history: ";

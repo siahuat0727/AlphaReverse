@@ -89,14 +89,15 @@ public class ReversiRule {
 		return canIgo(color, Board.history);
 	}
 
-	// check whether I can go and save the result in Board.possiblePos
+	// must be called exactly once before each step
 	protected static boolean canIgo(int color, ArrayList<Position> history) {
 		history.add(new Position(-1, -1));
-		checkWhereCanMove(color);
 		return IcanGo(color);
 	}
 
+	// check whether this color can go and save the result in Board.possiblePos
 	protected static boolean IcanGo(int color) {
+		checkWhereCanMove(color);
 		return !Board.possiblePos.isEmpty();
 	}
 
@@ -133,12 +134,12 @@ public class ReversiRule {
 		return true;
 	}
 
-	protected static void goToThis() {
-		goToThis(Board.history);
+	protected static void goToNow() {
+		goToNow(Board.history);
 	}
 
 	// run the board from start to now(depends on history)
-	protected static void goToThis(ArrayList<Position> history) {
+	protected static void goToNow(ArrayList<Position> history) {
 		Board.startAgain();
 		int historyColor = Board.BLACK;
 
@@ -328,7 +329,7 @@ public class ReversiRule {
 		if (Board.history.size() >= 3) {
 			Board.history.remove(Board.history.size() - 2);
 			Board.history.remove(Board.history.size() - 2);
-			goToThis();
+			goToNow();
 		}
 	}
 

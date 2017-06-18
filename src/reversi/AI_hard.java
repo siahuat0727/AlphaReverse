@@ -18,7 +18,7 @@ public class AI_hard extends AI_medium {
 			goodPos = minMax(5, color);
 		}
 
-		goToThis();
+		goToNow();
 
 		go(goodPos.getX(), goodPos.getY(), color);
 	}
@@ -41,7 +41,7 @@ public class AI_hard extends AI_medium {
 
 		for (Position move : possibleMove) {
 
-			goToThis(historyUntilNow);
+			goToNow(historyUntilNow);
 
 			go(move.getX(), move.getY(), color, false, historyUntilNow);
 
@@ -80,7 +80,7 @@ public class AI_hard extends AI_medium {
 
 		for (Position move : possibleMove) {
 
-			goToThis(historyUntilNow);
+			goToNow(historyUntilNow);
 
 			go(move.getX(), move.getY(), color, false, historyUntilNow);
 

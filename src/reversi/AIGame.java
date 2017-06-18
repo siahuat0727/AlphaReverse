@@ -11,9 +11,9 @@ public class AIGame extends JFrame implements ActionListener
 	private int color;
 	private int noMove = 0;
 	static boolean pressed = false ;
-	private int turn;
-	private int count = 0;
+	static boolean restarted = false ;
 	private int x , y;
+	private int myColor;
 	private String command;
 	
 	static Object lock = new Object();
@@ -62,6 +62,8 @@ public class AIGame extends JFrame implements ActionListener
 		undo.setActionCommand("UNDO");
 		undo.addActionListener(this);
 		undo.setEnabled(false);
+		undo.setRolloverEnabled(true);
+		undo.setRolloverIcon(new ImageIcon("Resources/giphy-tumblr.gif"));
 		
 		restart.setSize(250, 64);
 		restart.setLocation(540,500);
@@ -182,6 +184,7 @@ public class AIGame extends JFrame implements ActionListener
 				
 				if( noMove == 2)
 				{
+					new ScoreBoard(color);
 					status.setText("Game is over with white " + Board.whiteCount + " vs black " + Board.blackCount);
 					break;
 				}
@@ -191,17 +194,13 @@ public class AIGame extends JFrame implements ActionListener
 					noMove++;
 				}
 				else
-				{	
-					for(Position pos : Board.possiblePos)
-					{
-						boardc[pos.getX()][pos.getY()].setEnabled(true);
-						boardc[pos.getX()][pos.getY()].setBackground( Color.pink );
-					}
+				{
+					UpdateWhereCanGo(myColor);
 					if( pressed == false )
 					{
 						while(true) 
 						{
-							count ++;
+							//count ++;
 							synchronized( lock )
 							{
 								if( pressed == true )
@@ -213,37 +212,21 @@ public class AIGame extends JFrame implements ActionListener
 					}
 					x = Integer.parseInt(command.substring(1, 2));
 					y = Integer.parseInt(command.substring(2));
-					
+
 					System.out.println("hi " + x + " " + y);
 					
 					noMove = 0;
-					ReversiRule.goToThis();
+					ReversiRule.goToNow();
 					ReversiRule.go(x, y, color );
 				}
 				
-				for( int i = 0 ; i < bsize ; i++)
-				{
-					for( int j = 0 ; j < bsize ; j++ )
-					{
-						if( Board.board[i][j] == -1 )
-						{
-							boardc[i][j].setEnabled(false);
-							boardc[i][j].setBackground( Color.BLACK);
-						} 
-						else if(Board.board[i][j] == 1 )
-						{
-							boardc[i][j].setEnabled(false);
-							boardc[i][j].setBackground( Color.WHITE);
-						}
-						else
-						{
-							boardc[i][j].setEnabled(false);
-							boardc[i][j].setBackground(Color.green);
-						}
-						
-					}
-				}
+				UpdateGameBoard();
 				status.setText("white " + Board.whiteCount + " vs black " + Board.blackCount);
+				
+				//if(restarted == true )
+				//{
+				//	return;
+				//}
 				
 				restart.setEnabled(false);
 				undo.setEnabled(false);
@@ -262,6 +245,7 @@ public class AIGame extends JFrame implements ActionListener
 				if( noMove == 2)
 				{
 					status.setText("Game is over with white " + Board.whiteCount + " vs black " + Board.blackCount);
+					new ScoreBoard(color);
 					break;
 				}
 				
@@ -299,9 +283,55 @@ public class AIGame extends JFrame implements ActionListener
 					pressed = false;
 				}
 			}
+			
+			//stopThr();
+			//return;
+		}
+		
+		//public void stopThr()
+		//{
+		//	return;
+		//}
+		
+	}
+	
+	private void UpdateGameBoard(){
+		for( int i = 0 ; i < bsize ; i++)
+		{
+			for( int j = 0 ; j < bsize ; j++ )
+			{
+				if( Board.board[i][j] == -1 )
+				{
+					boardc[i][j].setEnabled(false);
+					boardc[i][j].setBackground( Color.BLACK);
+					//boardc[i][j].setIcon(new ImageIcon("Resources/blackChess.png"));
+				} 
+				else if(Board.board[i][j] == 1 )
+				{
+					boardc[i][j].setEnabled(false);
+					boardc[i][j].setBackground( Color.WHITE);
+					//boardc[i][j].setIcon(new ImageIcon("Resources/whiteChess.png"));
+				}
+				else
+				{
+					boardc[i][j].setEnabled(false);
+					boardc[i][j].setBackground(Color.green);
+				}
+				
+			}
 		}
 	}
 	
+	private void UpdateWhereCanGo(int color){
+		ReversiRule.checkWhereCanMove(color);
+		for(Position pos : Board.possiblePos)
+		{
+			boardc[pos.getX()][pos.getY()].setEnabled(true);
+			boardc[pos.getX()][pos.getY()].setBackground( Color.pink );
+		}
+	}
+	Thr walau;
+	@SuppressWarnings("deprecation")
 	public void actionPerformed( ActionEvent e )
 	{
 		command = e.getActionCommand();
@@ -311,27 +341,51 @@ public class AIGame extends JFrame implements ActionListener
 		{
 			System.out.println("Game restarted");
 			color = 0;
+			synchronized(lock)
+            {
+                restarted = true;
+            }
 			startGame();
 		}
-		else if( command.equals("Black") ) 
+		else if( command.equals("UNDO") ) 
 		{
+			ReversiRule.undo();
+			UpdateGameBoard();
+			UpdateWhereCanGo(myColor);
+			
+		}else if( command.equals("Black") ) 
+		{
+			myColor = Board.BLACK;
 			black.setVisible(false);
 			white.setVisible(false);
 			System.out.println(command);
 			color = -1;
 			startGame();
-			Thr walau = new Thr();
-			walau.start();
+			if(walau!=null){
+				walau.stop();
+				walau = new Thr();
+				walau.start();
+			}else{
+				walau = new Thr();
+				walau.start();
+			}
 		}
 		else if( command.equals("White") )
 		{
+			myColor = Board.WHITE;
 			white.setVisible(false);
 			black.setVisible(false);
 			System.out.println(command);
 			color = 1;
 			startGame();
-			Thr walau = new Thr();
-			walau.start();
+			if(walau!=null){
+				walau.stop();
+				walau = new Thr();
+				walau.start();
+			}else{
+				walau = new Thr();
+				walau.start();
+			}
 		}
 		/////////////////////////////////////////////////// chess action
 		else
