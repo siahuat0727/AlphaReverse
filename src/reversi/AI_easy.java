@@ -16,13 +16,14 @@ public class AI_easy extends ReversiRule {
 		for (Position pos : curPossiblePos) {
 			goToNow();
 
-			go(pos.getX(), pos.getY(), color, false, new ArrayList<Position>(Board.history)); // pass a dummy arrayList =.=
+			// pass a dummy arrayList =.=
+			go(pos.getX(), pos.getY(), color, false, new ArrayList<Position>(Board.history)); 
 
 			int value = getEvaluateValue(color);
 
 //			System.out.println("for " + pos.getX() + "," + pos.getY() + " value = " + value);
 			
-			// check there are some positions that are enough good 
+			// if the positions are good enough, add them into goodPos
 			if (value > max + 5) {
 				goodPos.clear();
 				goodPos.add(pos);
