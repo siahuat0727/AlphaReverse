@@ -168,18 +168,14 @@ public class ReversiRule {
 			weight = new int[Board.SIZE][Board.SIZE];
 
 			// edge(the other position will be assigned again)
-			for (int i = 0; i < Board.SIZE; ++i) {
-				for (int j = 0; j < Board.SIZE; ++j) {
+			for (int i = 0; i < Board.SIZE; ++i)
+				for (int j = 0; j < Board.SIZE; ++j)
 					weight[i][j] = 5;
-				}
-			}
 
 			// middle
-			for (int i = 1; i < Board.SIZE - 1; ++i) {
-				for (int j = 1; j < Board.SIZE - 1; ++j) {
+			for (int i = 1; i < Board.SIZE - 1; ++i)
+				for (int j = 1; j < Board.SIZE - 1; ++j)
 					weight[i][j] = 1;
-				}
-			}
 
 			// corner
 			weight[0][0] = weight[0][Board.SIZE
@@ -271,7 +267,7 @@ public class ReversiRule {
 			for (int j = 0; j < Board.SIZE; ++j) {
 				if (Board.board[i][j] == color)
 					ans += weight[i][j];
-				else if (Board.board[i][j] == -1 * color)
+				else if (Board.board[i][j] == -color)
 					ans -= weight[i][j];
 			}
 		}
@@ -282,9 +278,8 @@ public class ReversiRule {
 	protected static int getMobility(int color) {
 		int ans = 0;
 		checkWhereCanMove(color);
-		for (Position pos : Board.possiblePos) {
+		for (Position pos : Board.possiblePos)
 			ans += mobility[pos.getX()][pos.getY()];
-		}
 
 		// System.out.print(" mobility = "+ans);
 		return 3 * ans; // can adjust the weight of mobility in evaluateValue
@@ -292,7 +287,6 @@ public class ReversiRule {
 
 	protected static int getEvaluateValue(int color) {
 		int weightValue = getWeight(color);
-
 		int mobilityEnemy = getMobility(color);
 
 		return weightValue + mobilityEnemy;

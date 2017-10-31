@@ -9,7 +9,7 @@ public class AI_hard extends AI_medium {
 		Position goodPos;
 
 		// when it is about to finish, don't consider weight and mobility but
-		// the most chess pieces
+		// consider for the most chess pieces
 		if (getTotalStep() - getStep() + 1 <= 10) {
 			updateWeight(1);
 			goodPos = minMax(10, color);
@@ -29,15 +29,8 @@ public class AI_hard extends AI_medium {
 		int bestValue = -1000;
 		Position bestMove = new Position(0, 0);
 
-		// System.out.println("before minmax");
-		// Board.printBoard();
-
 		ArrayList<Position> possibleMove = new ArrayList<Position>(checkWhereCanMove(color));
 		ArrayList<Position> historyUntilNow = new ArrayList<Position>(Board.history);
-
-		// for(Position move : Board.history){
-		// move.print();
-		// }
 
 		for (Position move : possibleMove) {
 
@@ -45,13 +38,9 @@ public class AI_hard extends AI_medium {
 
 			go(move.getX(), move.getY(), color, false, historyUntilNow);
 
-			// System.out.println("try "+move);
-			// Board.printBoard();
-
 			int value = -alphaBeta(depth - 1, -color, new ArrayList<Position>(historyUntilNow), -100000, 100000);
 			historyUntilNow.set(historyUntilNow.size() - 1, new Position(-1, -1));
 
-			// System.out.println("value = "+value);
 			if (value > bestValue) {
 				bestValue = value;
 				bestMove = new Position(move);
@@ -95,7 +84,5 @@ public class AI_hard extends AI_medium {
 			historyUntilNow.set(historyUntilNow.size() - 1, new Position(-1, -1));
 		}
 		return bestValue;
-
 	}
-
 }
